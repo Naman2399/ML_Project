@@ -1,0 +1,4 @@
+python3 -m venv ~/.venv/pilfer
+source ~/.venv/pilfer/bin/activate
+jupyter-notebook
+deactivate
