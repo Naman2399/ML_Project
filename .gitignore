@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment / install directory
+venv/
+env/
+env3/
+.venv/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Python cache
+__pycache__/
+
+# Jupyter Notebook specific files
+.ipynb_checkpoints/
+
+# Ignore any other directory or file specific to your project setup
+plots
