@@ -4,6 +4,35 @@ import numpy as np
 import torch
 from sklearn.metrics import mean_squared_error, r2_score
 from torch.utils.data import TensorDataset, DataLoader
+import os
+
+
+def create_dataloaders(X, y, test_frac=0.1, val_frac=0.1, batch_size=32):
+    # Split dataset into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_frac, random_state=42)
+
+    # Split train set into train and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=val_frac, random_state=42)
+
+    # Convert numpy arrays to PyTorch tensors
+    X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
+    y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
+    X_val_tensor = torch.tensor(X_val, dtype=torch.float32)
+    y_val_tensor = torch.tensor(y_val, dtype=torch.float32)
+    X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+    y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
+
+    # Create TensorDataset instances
+    train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
+    val_dataset = TensorDataset(X_val_tensor, y_val_tensor)
+    test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
+
+    # Create DataLoader instances
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=batch_size)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size)
+
+    return train_dataloader, test_dataloader, val_dataloader
 
 
 def split_dataset(X, y, test_size=0.2, val_size=0.1, random_state=42):
@@ -33,7 +62,6 @@ def split_dataset(X, y, test_size=0.2, val_size=0.1, random_state=42):
     return X_train, y_train, X_test, y_test, X_val, y_val
 
 
-import os
 
 
 def plot_feature_vs_target(X, y, output_dir="plots", file_prefix="feature"):
@@ -89,6 +117,24 @@ def plot_losses(train_losses, val_losses, output_dir="plots", file_name="loss_pl
     plt.savefig(os.path.join(output_dir, file_name))
     plt.close()
 
+
+def plot_accuracies(train_accuracies, val_accuracies, output_dir="plots", file_name="accuracy_plot.png"):
+    epochs = range(1, len(train_accuracies) + 1)
+    plt.plot(epochs, train_accuracies, label='Training Accuracy')
+    plt.plot(epochs, val_accuracies, label='Validation Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.title('Training and Validation Accuracy')
+    plt.legend()
+    plt.tight_layout()
+
+    # Ensure output directory exists
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Save the plot as an image
+    plt.savefig(os.path.join(output_dir, file_name))
+    plt.close()
 
 def mean_absolute_error(model, test_loader):
     """

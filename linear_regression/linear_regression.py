@@ -28,6 +28,7 @@ def train_model(model, train_loader, val_loader, num_epochs=10, lr=0.001, update
         # Training phase
         model.train()
         train_loss = 0.0
+        total_train = 0.0
         progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs}", leave=False)
         for inputs, targets in progress_bar:
             optimizer.zero_grad()
@@ -36,7 +37,8 @@ def train_model(model, train_loader, val_loader, num_epochs=10, lr=0.001, update
             loss.backward()
             optimizer.step()
             train_loss += loss.item()
-            progress_bar.set_postfix({'train_loss': train_loss / len(train_loader)})
+            total_train += inputs.size(0)
+            progress_bar.set_postfix({'train_loss': train_loss / total_train})
         train_loss /= len(train_loader)
         train_losses.append(train_loss)
 
