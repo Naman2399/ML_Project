@@ -15,12 +15,12 @@ def create_dataloaders(X, y, test_frac=0.1, val_frac=0.1, batch_size=32):
     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=val_frac, random_state=42)
 
     # Convert numpy arrays to PyTorch tensors
-    X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-    y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
-    X_val_tensor = torch.tensor(X_val, dtype=torch.float32)
-    y_val_tensor = torch.tensor(y_val, dtype=torch.float32)
-    X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
-    y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
+    X_train_tensor = torch.tensor(X_train.clone().detach(), dtype=torch.float32)
+    y_train_tensor = torch.tensor(y_train.clone().detach(), dtype=torch.float32)
+    X_val_tensor = torch.tensor(X_val.clone().detach(), dtype=torch.float32)
+    y_val_tensor = torch.tensor(y_val.clone().detach(), dtype=torch.float32)
+    X_test_tensor = torch.tensor(X_test.clone().detach(), dtype=torch.float32)
+    y_test_tensor = torch.tensor(y_test.clone().detach(), dtype=torch.float32)
 
     # Create TensorDataset instances
     train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
