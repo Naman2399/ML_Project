@@ -87,6 +87,7 @@ def train_model(model, train_loader, val_loader, num_epochs=50, lr=0.001, update
         train_iterator.set_postfix({'train_loss': avg_train_loss, 'val_loss': avg_val_loss, 'val_acc': val_accuracy, 'train_acc': train_accuracy})
         train_iterator.close()
     return train_losses, val_losses, train_accuracies, val_accuracies
+
 def test_model(model, dataloader):
     y_true = []
     y_pred = []

@@ -52,6 +52,7 @@ if __name__ == "__main__":
 
         if args.model.lower() == 'multi_class' :
             from logisitc_regression import multiclass_classification
+            model = multiclass_classification.SimpleNN(input_size=X.shape[1], num_classes= y.shape[1])
 
 
     # Print model summary
@@ -71,6 +72,13 @@ if __name__ == "__main__":
             # Plots Losses and Accuracies
             plot_losses(train_losses=train_losses, val_losses=val_losses, file_name= f"loss_{args.model.lower()}.png" )
             plot_accuracies(train_accuracies, val_accuracies, file_name= f"acc_{args.model.lower()}.png")
+
+        if args.model.lower() == 'multi_class' :
+            from logisitc_regression import multiclass_classification
+            train_losses, val_losses, train_accuracies, val_accuracies = multiclass_classification.train_model(model, train_dataloader, val_dataloader, num_epochs= args.epochs, lr= args.lr)
+            # Plots Losses and Accuracies
+            plot_losses(train_losses=train_losses, val_losses=val_losses, file_name=f"loss_{args.model.lower()}.png")
+            plot_accuracies(train_accuracies, val_accuracies, file_name=f"acc_{args.model.lower()}.png")
 
 
     # Test Model & Evaluation Meterics
@@ -93,3 +101,9 @@ if __name__ == "__main__":
             print(f"Test Mean Squared Error: {average_loss:.4f}")
             print(f"Test Accuracy : {accuracy:.4f}")
 
+        if args.model.lower() == 'multi_class' :
+            # Test and Evaluation Metric
+            from logisitc_regression import multiclass_classification
+            accuracy, precision, recall, f1, roc_auc, average_loss = multiclass_classification.test_model(model,test_dataloader, y.shape[1])
+            print(f"Test Mean Squared Error: {average_loss:.4f}")
+            print(f"Test Accuracy : {accuracy:.4f}")

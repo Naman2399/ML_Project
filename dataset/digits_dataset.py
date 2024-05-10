@@ -1,6 +1,9 @@
 from sklearn.datasets import load_digits
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+import torch
+from sklearn.preprocessing import OneHotEncoder
+
 
 def describe_dataset():
     # Load the digits dataset
@@ -31,11 +34,31 @@ def describe_dataset():
     print("Minimum value among all features:", min_value)
     print("Maximum value among all features:", max_value)
 
+    # Convert numpy arrays to tensors
+    X = torch.from_numpy(X)
+    y = torch.from_numpy(y)
+
+    # Print the unique labels
+    unique_labels = torch.unique(y)
+    print("Unique labels:", unique_labels)
+
+    # Convert y to one-hot labels
+    one_hot_encoder = OneHotEncoder(sparse_output=False)  # Explicitly set sparse=False
+    y_one_hot = one_hot_encoder.fit_transform(y.reshape(-1, 1))
+    y_one_hot = torch.tensor(y_one_hot, dtype=torch.float32)
+
+
+    # Get details for 1 sample
+    print("Details of Feature 1 : ", X[0])
+    print("Labels of Feature 1 :", y_one_hot[0])
+
     # Print the shape of the dataset
     print("Shape of features:", X.shape)
-    print("Shape of target variable:", y.shape)
+    print("Shape of target variable:", y_one_hot.shape)
 
-    return X, y
+    return X, y_one_hot
 
 def load_dataset() :
     return describe_dataset()
+
+load_dataset()

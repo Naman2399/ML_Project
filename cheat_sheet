@@ -3,3 +3,6 @@ python main.py --dataset housing --model linear_reg
 
 Binary Classification
 python main.py --dataset breast_cancer --model binary_class
+
+Multi-class Classification
+python main.py --dataset digits --model multi_class
