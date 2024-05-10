@@ -4,6 +4,8 @@ import torch.optim as optim
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, roc_curve
 import numpy as np
+from sklearn.metrics import confusion_matrix
+
 
 class SimpleNN(nn.Module):
     def __init__(self, input_size, num_classes):
@@ -114,5 +116,10 @@ def test_model(model, dataloader, num_classes):
     print(f'F1 Score: {f1:.2f}')
     print(f'ROC-AUC Score: {roc_auc:.2f}')
     print(f'Average Loss: {average_loss:.2f}')
+
+    # Compute confusion matrix
+    conf_matrix = confusion_matrix(np.argmax(y_true, axis=1), y_pred)
+    print("Confusion Matrix:")
+    print(conf_matrix)
 
     return accuracy, precision, recall, f1, roc_auc, average_loss
