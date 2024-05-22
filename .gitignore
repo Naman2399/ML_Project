@@ -26,3 +26,7 @@ __pycache__/
 
 # Ignore any other directory or file specific to your project setup
 plots
+
+# Folders to ignore
+/data
+/dataset/data
