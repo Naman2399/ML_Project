@@ -1,3 +1,4 @@
+import torch
 from sklearn.datasets import load_breast_cancer
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -32,6 +33,11 @@ def describe_dataset() :
     # Print the minimum and maximum values among all features
     print("Minimum value among all features:", min_value)
     print("Maximum value among all features:", max_value)
+
+
+    X = torch.from_numpy(X)
+    y = torch.from_numpy(y)
+    y = y.float()
 
     # Print the shape of the dataset
     print("Shape of features:", X.shape)

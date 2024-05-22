@@ -9,3 +9,12 @@ python main.py --dataset digits --model multi_class
 
 Supervised Learning - Categorical (For CIFAR 10 dataset)
 python main.py --dataset cifar10 --model lenet --batch 512 --epcoh 100 --lr 0.0005
+
+Random Forest
+.ipynb file is there in random_forest
+
+SVM
+.ipynb file is there in svm
+
+PCA
+.ipynb file is there in pca
