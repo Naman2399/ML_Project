@@ -1,4 +1,6 @@
 import argparse
+import sys
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -19,6 +21,8 @@ import model_utils.train as training
 import model_utils.evaluation as evaluation
 
 import os
+from torch.utils.tensorboard import SummaryWriter
+writer = SummaryWriter("runs/mnist")
 
 def load_dataset(name)  :
     datasets = {
@@ -111,8 +115,11 @@ def main():
     if args.model.lower() in ['lenet'] :
         model = lenet_5.LeNet5()
         model.to(device)
-        summary(model, ( X.shape[1], X.shape[2], X.shape[3], ))
+        summary(model, (X.shape[1], X.shape[2], X.shape[3], ))
 
+        input_tensor_example = torch.rand(((X.shape[1], X.shape[2], X.shape[3])))
+        print("Input Tensor Example : ", input_tensor_example.shape)
+        writer.add_graph(model, input_tensor_example)
         # Define loss function and optimizer
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -121,7 +128,7 @@ def main():
         import model_utils.train as training
         train_losses, train_accuracies, val_losses, val_accuracies = training.train(model,
                     train_loader=train_loader, validation_loader=val_loader, criterion=criterion,
-                    optimizer=optimizer, epochs=args.epochs)
+                    optimizer=optimizer, epochs=args.epochs, writer= writer)
 
         plot_losses(train_losses=train_losses, val_losses=val_losses, file_name=f"{args.model.lower()}-loss.png")
         plot_accuracies(train_accuracies, val_accuracies, file_name=f"{args.model.lower()}-acc.png")
@@ -134,6 +141,8 @@ def main():
         print("Confusion Matrix:")
         print(confusion)
 
+    writer.close()
+    sys.exit()
 
 
 if __name__ == "__main__":

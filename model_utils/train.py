@@ -10,18 +10,23 @@ from model_utils.validation import validation
 
 
 # Training function
-def train(model, train_loader, validation_loader, criterion, optimizer, epochs):
+def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer):
+
+    # Initializing list for  train, validation accuracy and losses
     train_losses = []
     train_accuracies = []
     val_losses = []
     val_accuracies = []
 
     for epoch in range(epochs):
+
         # Training
         model.train()
         running_loss = 0.0
         correct = 0
         total = 0
+
+        # Progress Bar
         pbar = tqdm(train_loader, desc=f"Epoch {epoch + 1}/{epochs}", unit="batch")
         for inputs, labels in pbar:
             optimizer.zero_grad()
@@ -36,7 +41,8 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs):
             total += labels.size(0)
             correct += (predicted == true_labels).sum().item()
 
-            pbar.set_postfix({'Loss': running_loss / len(train_loader), 'Accuracy': 100 * correct / total})
+            # Adding details in progress bar as postfix
+            pbar.set_postfix({'Train Loss': running_loss / len(train_loader), 'Train Accuracy': 100 * correct / total})
 
         train_loss = running_loss / len(train_loader)
         train_acc = 100 * correct / total
@@ -47,8 +53,10 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs):
         val_losses.append(val_loss)
         val_accuracies.append(val_acc)
 
-        print()
-        print(
-            f"Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
+        print(f"\n Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
+        writer.add_scalar('train_loss', train_loss, epoch + 1)
+        writer.add_scalar('valid_loss', val_loss, epoch + 1)
+        writer.add_scalar('train_acc', train_acc, epoch + 1)
+        writer.add_scalar('valid_acc', val_acc, epoch + 1)
 
     return train_losses, train_accuracies, val_losses, val_accuracies
