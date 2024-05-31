@@ -14,7 +14,7 @@ def create_checkpoint_filename(args):
   filename = f"{args.exp_name}_{args.dataset}_{args.model}_lr_{args.lr}.pt"
   return filename
 
-def save_checkpoint(args, model, optimizer, epoch, checkpoint_path):
+def save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss):
   """
   Saves model weights, optimizer state, and current epoch to a checkpoint file.
 
@@ -32,7 +32,8 @@ def save_checkpoint(args, model, optimizer, epoch, checkpoint_path):
   torch.save({
       'epoch': epoch,
       'model_state_dict': model.state_dict(),
-      'optimizer_state_dict': optimizer.state_dict()
+      'optimizer_state_dict': optimizer.state_dict(),
+      'val_loss' : val_loss,
   }, checkpoint_path)
 
   print(f"Checkpoint saved: {checkpoint_path}")
@@ -63,6 +64,9 @@ def load_checkpoint(model, optimizer, checkpoint_path):
   # Load current epoch
   current_epoch = checkpoint['epoch']
 
+  # Loading validation loss
+  val_loss = checkpoint['val_loss']
+
   print(f"Checkpoint loaded: {checkpoint_path}")
 
-  return model, optimizer, current_epoch
+  return model, optimizer, current_epoch, val_loss

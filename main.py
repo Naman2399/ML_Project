@@ -66,7 +66,7 @@ def main():
 
     X = X.to(device)
     y = y.to(device)
-    train_loader, test_loader, val_loader = create_dataloaders(X, y, batch_size=args.batch, test_frac=0.1, val_frac=0.1)
+    train_loader, test_loader, val_loader = create_dataloaders(X, y, batch_size=args.batch, test_frac=0.1, val_frac=0.1, device = device)
 
 
     '''
@@ -122,6 +122,7 @@ def main():
         summary(model, (X.shape[1], X.shape[2], X.shape[3], ))
 
         input_tensor_example = torch.rand(((X.shape[1], X.shape[2], X.shape[3])))
+        input_tensor_example = input_tensor_example.to(device)
         print("Input Tensor Example : ", input_tensor_example.shape)
         writer.add_graph(model, input_tensor_example)
 
@@ -129,6 +130,7 @@ def main():
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=args.lr)
         current_epoch = 0
+        least_val_loss = float('inf')
 
         # Checkpoint filename
         if args.ckpt_filename is None :
@@ -140,15 +142,16 @@ def main():
             print("Loading contents from checkpoints")
             # Load model, optimizer, epoch from checkpoints
             checkpoint_path = os.path.join(args.ckpt_path, args.ckpt_filename)
-            model, optimizer, current_epoch = load_checkpoint(model, optimizer, checkpoint_path= checkpoint_path)
+            model, optimizer, current_epoch, val_loss = load_checkpoint(model, optimizer, checkpoint_path= checkpoint_path)
             current_epoch += 1
+            least_val_loss = val_loss
 
         # Model Training and Validation
         import model_utils.train as training
         train_losses, train_accuracies, val_losses, val_accuracies = training.train(model,
                     train_loader=train_loader, validation_loader=val_loader, criterion=criterion,
                     optimizer=optimizer, epochs=args.epochs, writer= writer, checkpoint_path= checkpoint_path,
-                    current_epoch= current_epoch, args= args)
+                    current_epoch= current_epoch, least_val_loss= least_val_loss, args= args)
 
         plot_losses(train_losses=train_losses, val_losses=val_losses, file_name=f"{args.model.lower()}-loss.png")
         plot_accuracies(train_accuracies, val_accuracies, file_name=f"{args.model.lower()}-acc.png")

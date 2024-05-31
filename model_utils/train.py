@@ -1,9 +1,4 @@
 import torch
-import torch.nn as nn
-import torch.optim as optim
-import torchvision.datasets as datasets
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from model_utils.checkpoints import save_checkpoint
@@ -11,7 +6,7 @@ from model_utils.validation import validation
 
 
 # Training function
-def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer, checkpoint_path, current_epoch, args):
+def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer, checkpoint_path, current_epoch, least_val_loss, args):
 
     # Initializing list for  train, validation accuracy and losses
     train_losses = []
@@ -54,14 +49,17 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         val_losses.append(val_loss)
         val_accuracies.append(val_acc)
 
-        print(f"\n Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
+        print(f"\nEpoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
         writer.add_scalar('train_loss', train_loss, epoch + 1)
         writer.add_scalar('valid_loss', val_loss, epoch + 1)
         writer.add_scalar('train_acc', train_acc, epoch + 1)
         writer.add_scalar('valid_acc', val_acc, epoch + 1)
 
+        # Always saving best model with least validation loss
         # Saving model checkpoints
-        save_checkpoint(args, model, optimizer, epoch, checkpoint_path)
+        if val_loss < least_val_loss :
+            save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss)
+            least_val_loss = val_loss
 
         # Stopping Criteria for model
         if len(val_losses) >= 10 and  stopping_criteria(val_losses[-10:], val_loss) :
