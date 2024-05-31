@@ -6,11 +6,12 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from model_utils.checkpoints import save_checkpoint
 from model_utils.validation import validation
 
 
 # Training function
-def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer):
+def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer, checkpoint_path, current_epoch, args):
 
     # Initializing list for  train, validation accuracy and losses
     train_losses = []
@@ -18,7 +19,7 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
     val_losses = []
     val_accuracies = []
 
-    for epoch in range(epochs):
+    for epoch in range(current_epoch, epochs):
 
         # Training
         model.train()
@@ -58,5 +59,8 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         writer.add_scalar('valid_loss', val_loss, epoch + 1)
         writer.add_scalar('train_acc', train_acc, epoch + 1)
         writer.add_scalar('valid_acc', val_acc, epoch + 1)
+
+        # Saving model checkpoints
+        save_checkpoint(args, model, optimizer, epoch, checkpoint_path)
 
     return train_losses, train_accuracies, val_losses, val_accuracies
