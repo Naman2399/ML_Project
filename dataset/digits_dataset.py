@@ -60,5 +60,3 @@ def describe_dataset():
 
 def load_dataset() :
     return describe_dataset()
-
-load_dataset()

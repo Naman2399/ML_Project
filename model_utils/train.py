@@ -6,6 +6,9 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from model_utils.validation import validation
+
+
 # Training function
 def train(model, train_loader, validation_loader, criterion, optimizer, epochs):
     train_losses = []
@@ -40,26 +43,11 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs):
         train_losses.append(train_loss)
         train_accuracies.append(train_acc)
 
-        # Validation
-        model.eval()
-        val_loss = 0.0
-        correct = 0
-        total = 0
-        with torch.no_grad():
-            for inputs, labels in validation_loader:
-                outputs = model(inputs)
-                loss = criterion(outputs, labels)
-                val_loss += loss.item()
-                _, predicted = torch.max(outputs, 1)
-                _, true_labels = torch.max(labels, 1)
-                total += labels.size(0)
-                correct += (predicted == true_labels).sum().item()
-
-        val_loss /= len(validation_loader)
-        val_acc = 100 * correct / total
+        val_loss, val_acc = validation(model, validation_loader, criterion, optimizer, epochs)
         val_losses.append(val_loss)
         val_accuracies.append(val_acc)
 
+        print()
         print(
             f"Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
 
