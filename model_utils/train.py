@@ -63,4 +63,16 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         # Saving model checkpoints
         save_checkpoint(args, model, optimizer, epoch, checkpoint_path)
 
+        # Stopping Criteria for model
+        if len(val_losses) >= 10 and  stopping_criteria(val_losses[-10:], val_loss) :
+            print("Early Stopping .....")
+            break
+
     return train_losses, train_accuracies, val_losses, val_accuracies
+
+
+def stopping_criteria(val_losses, val_loss, patience_level = 0.05) :
+
+    if val_loss <= min(val_losses) + patience_level :
+        return False
+    return  True
