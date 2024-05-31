@@ -5,7 +5,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchsummary import summary
-
 from logisitc_regression import binary_classification
 from model_utils.checkpoints import create_checkpoint_filename, load_checkpoint
 from model_utils.device import get_available_device
@@ -36,7 +35,7 @@ def load_dataset(name)  :
 def main():
     parser = argparse.ArgumentParser(description="Describe dataset details")
     parser.add_argument("--dataset", type=str, help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10')")
-    parser.add_argument("--model", type=str, help="Name of the model to use (e.g., 'linear_reg', 'binary_class', 'multi_class', 'lenet')")
+    parser.add_argument("--model", type=str, help="Name of the model to use (e.g., 'linear_reg', 'binary_class', 'multi_class', 'lenet', 'lenetv2')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
@@ -116,8 +115,11 @@ def main():
         print(f"Test Mean Squared Error: {average_loss:.4f}")
         print(f"Test Accuracy : {accuracy:.4f}")
 
-    if args.model.lower() in ['lenet'] :
-        model = lenet_5.LeNet5()
+    if args.model.lower() in ['lenet', 'lenetv2'] :
+        if args.model.lower() == 'lenet' :
+            model = lenet_5.LeNet5()
+        elif args.model.lower() == 'lenetv2' :
+            model = lenet_5.LeNet5_v2()
         model.to(device)
         summary(model, (X.shape[1], X.shape[2], X.shape[3], ))
 

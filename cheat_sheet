@@ -22,3 +22,7 @@ PCA
 
 Tensorboard
 tensorboard --logdir=runs
+
+
+------------------------------------- Tasks ----------------------------------------
+1. How to view layer wise params for a model
