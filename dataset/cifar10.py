@@ -38,5 +38,3 @@ def describe_dataset(batch_size = 256) :
 
 def load_dataset() :
     return describe_dataset()
-
-load_dataset()

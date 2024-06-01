@@ -82,9 +82,9 @@ def plot_feature_vs_target(X, y, output_dir="plots", file_prefix="feature"):
 
     num_features = X.shape[1]
     for i in range(num_features):
-        feature_values = X[:, i].numpy()
+        feature_values = X[:, i].cpu().numpy()
         plt.figure(figsize=(8, 6))
-        plt.scatter(feature_values, y.numpy(), color='blue', alpha=0.5)
+        plt.scatter(feature_values, y.cpu().numpy(), color='blue', alpha=0.5)
         plt.xlabel("Feature " + str(i + 1))
         plt.ylabel("Target")
         plt.title("Feature " + str(i + 1) + " vs. Target")
@@ -156,8 +156,8 @@ def mean_absolute_error(model, test_loader):
     with torch.no_grad():
         for inputs, labels in test_loader:
             outputs = model(inputs)
-            all_predictions.append(outputs.numpy())
-            all_labels.append(labels.numpy())
+            all_predictions.append(outputs.cpu().numpy())
+            all_labels.append(labels.cpu().numpy())
 
     all_predictions = np.concatenate(all_predictions)
     all_labels = np.concatenate(all_labels)
@@ -182,8 +182,8 @@ def mean_squared_error(model, test_loader):
     with torch.no_grad():
         for inputs, labels in test_loader:
             outputs = model(inputs)
-            all_predictions.append(outputs.numpy())
-            all_labels.append(labels.numpy())
+            all_predictions.append(outputs.cpu().numpy())
+            all_labels.append(labels.cpu().numpy())
 
     all_predictions = np.concatenate(all_predictions)
     all_labels = np.concatenate(all_labels)
@@ -222,8 +222,8 @@ def r_squared(model, test_loader):
     with torch.no_grad():
         for inputs, labels in test_loader:
             outputs = model(inputs)
-            all_predictions.append(outputs.numpy())
-            all_labels.append(labels.numpy())
+            all_predictions.append(outputs.cpu().numpy())
+            all_labels.append(labels.cpu().numpy())
 
     all_predictions = np.concatenate(all_predictions)
     all_labels = np.concatenate(all_labels)
@@ -249,8 +249,8 @@ def adjusted_r_squared(model, test_loader, n_features):
     with torch.no_grad():
         for inputs, labels in test_loader:
             outputs = model(inputs)
-            all_predictions.append(outputs.numpy())
-            all_labels.append(labels.numpy())
+            all_predictions.append(outputs.cpu().numpy())
+            all_labels.append(labels.cpu().numpy())
 
     all_predictions = np.concatenate(all_predictions)
     all_labels = np.concatenate(all_labels)
