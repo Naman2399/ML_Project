@@ -1,8 +1,8 @@
 import torch
 from tqdm import tqdm
 
-from model_utils.checkpoints import save_checkpoint
-from model_utils.validation import validation
+from model_utils.multi_class_image_classification.checkpoints import save_checkpoint
+from model_utils.multi_class_image_classification.validation import validation
 
 
 # Training function

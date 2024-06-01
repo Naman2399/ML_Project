@@ -1,24 +1,17 @@
 import argparse
 import sys
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torchsummary import summary
-from model_utils.checkpoints import create_checkpoint_filename, load_checkpoint
-from model_utils.device import get_available_device
-from utils import split_dataset, plot_feature_vs_target, create_dataloader, plot_losses, create_dataloaders, plot_accuracies
-import dataset.housing_dataset as housing
-import dataset.breast_cancer_dataset as breast_cancer
-import dataset.digits_dataset as digits
-import dataset.cifar10 as cifar10
-import logisitc_regression.multiclass_classification as multi_class
-import models.lenet_5 as lenet_5
-import model_utils.train as training
-import model_utils.evaluation as evaluation
-
-import os
 from torch.utils.tensorboard import SummaryWriter
+
+import dataset.breast_cancer_dataset as breast_cancer
+import dataset.cifar10 as cifar10
+import dataset.digits_dataset as digits
+import dataset.housing_dataset as housing
+import models.lenet_5 as lenet_5
+from model_utils.multi_class_image_classification.checkpoints import create_checkpoint_filename
+from model_utils.multi_class_image_classification.device import get_available_device
+from utils import plot_feature_vs_target, create_dataloaders
+from models import linear_regression as linear_regression
 
 def load_dataset(name)  :
     datasets = {
@@ -82,7 +75,8 @@ def main():
 
         # Linear Regression Model
         import main_modules.main_linear_regression as main_modules
-        main_modules.run(X, args, device, test_loader, train_loader, val_loader)
+        model = linear_regression.LinearRegression(input_size=X.shape[1])
+        main_modules.run(model, X, args, device, test_loader, train_loader, val_loader)
 
     '''
     Binary Dataset 
@@ -123,7 +117,7 @@ def main():
         elif args.model.lower() == 'lenetv2' :
             model = lenet_5.LeNet5_v2()
 
-        import main_modules.main_mnist_image_classification as main_modules
+        import main_modules.main_image_classification as main_modules
         main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
 
     writer.close()

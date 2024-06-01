@@ -1,8 +1,7 @@
-from utils import split_dataset, plot_feature_vs_target, create_dataloader, plot_losses, create_dataloaders, plot_accuracies
-import logisitc_regression.binary_classification as binary_class
-from logisitc_regression import binary_classification
-import logisitc_regression.multiclass_classification as multi_class
 from torchsummary import summary
+
+import logisitc_regression.multiclass_classification as multi_class
+from utils import plot_losses, plot_accuracies
 
 
 def run(X, args, device, test_loader, train_loader, val_loader, y):
