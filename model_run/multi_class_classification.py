@@ -1,11 +1,10 @@
-from torchsummary import summary
-
-import models.multiclass_classification as multi_class
-from utils import plot_losses, plot_accuracies
-import torch
 import torch.nn as nn
 import torch.optim as optim
-from checkpoints import *
+from torchsummary import summary
+
+from utils.checkpoints import *
+from utils.data_utils import plot_losses, plot_accuracies
+
 
 def run(X, args, device, model, test_loader, train_loader, val_loader, writer):
 

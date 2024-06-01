@@ -1,8 +1,5 @@
-import torch
 from tqdm import tqdm
-import torch.nn as nn
-import torch.optim as optim
-from checkpoints import *
+from utils.checkpoints import *
 from model_utils.multiclass_classification.validation import validation
 
 # Training function

@@ -1,11 +1,11 @@
-from torchsummary import summary
-from utils import plot_losses, plot_accuracies
-import models.binary_classification as binary_class
-from models import binary_classification
 import torch.nn as nn
 import torch.optim as optim
-from model_utils.binary_classification.train import train
+from torchsummary import summary
+
 from model_utils.binary_classification.evaluation import test
+from model_utils.binary_classification.train import train
+from utils.data_utils import plot_losses, plot_accuracies
+
 
 def run(model, X, args, device, test_loader, train_loader, val_loader):
 

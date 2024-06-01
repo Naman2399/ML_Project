@@ -1,6 +1,6 @@
 from models import linear_regression as linear_regression
 from torchsummary import summary
-from utils import plot_losses
+from utils.data_utils import plot_losses
 import torch
 import torch.nn as nn
 import torch.optim as optim

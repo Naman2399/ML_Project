@@ -8,9 +8,9 @@ import dataset.cifar10 as cifar10
 import dataset.digits_dataset as digits
 import dataset.housing_dataset as housing
 import models.lenet_5 as lenet_5
-from checkpoints import create_checkpoint_filename
-from device import get_available_device
-from utils import plot_feature_vs_target, create_dataloaders
+from utils.checkpoints import create_checkpoint_filename
+from utils.device import get_available_device
+from utils.data_utils import plot_feature_vs_target, create_dataloaders
 from models import linear_regression as linear_regression
 from models import binary_classification as binary_classification
 from models import multiclass_classification as multiclass_classification
@@ -76,7 +76,7 @@ def main():
         plot_feature_vs_target(X, y, output_dir="plots", file_prefix="features_vs_target")
 
         # Linear Regression Model
-        import model_run.main_linear_regression as main_modules
+        import model_run.linear_regression as main_modules
         model = linear_regression.LinearRegression(input_size=X.shape[1])
         main_modules.run(model, X, args, device, test_loader, train_loader, val_loader)
 

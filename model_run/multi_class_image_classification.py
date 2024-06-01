@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torchsummary import summary
 
-from checkpoints import create_checkpoint_filename, load_checkpoint
-from utils import plot_losses, plot_accuracies
+from utils.checkpoints import create_checkpoint_filename, load_checkpoint
+from utils.data_utils import plot_losses, plot_accuracies
 
 
 def run(X, args, device, model, test_loader, train_loader, val_loader, writer):

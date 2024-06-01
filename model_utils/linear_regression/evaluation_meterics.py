@@ -1,11 +1,4 @@
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-
-from utils import *
-
+from utils.data_utils import *
 def evaluation_metrics(model, test_loader, n_features):
     """
     Compute and print various evaluation metrics using the model and test loader.
