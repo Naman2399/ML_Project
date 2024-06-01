@@ -14,6 +14,8 @@ from utils.data_utils import plot_feature_vs_target, create_dataloaders
 from models import linear_regression as linear_regression
 from models import binary_classification as binary_classification
 from models import multiclass_classification as multiclass_classification
+from utils.func_utils import remove_folder_content
+
 
 def load_dataset(name)  :
     datasets = {
@@ -38,6 +40,8 @@ def main():
     args = parser.parse_args()
     writer = SummaryWriter(f"runs/{create_checkpoint_filename(args)}")
 
+    # Remove folder contents
+    remove_folder_content(f"runs/{create_checkpoint_filename(args)}")
 
     '''
     Device details

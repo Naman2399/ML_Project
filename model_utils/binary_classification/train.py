@@ -45,7 +45,7 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
             pbar.set_postfix({'Train loss': running_loss/total,  'Train Accuracy': 100 * correct /total})
 
         train_loss = running_loss / len(train_loader)
-        train_acc = 100 * correct_train / total
+        train_acc = 100 * correct / total
         train_losses.append(train_loss)
         train_accuracies.append(train_acc)
 
@@ -60,7 +60,7 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         writer.add_scalar('train_acc', train_acc, epoch + 1)
         writer.add_scalar('valid_acc', val_acc, epoch + 1)
 
-        # Always saving best model with least validation loss
+        # Always saving best model with the least validation loss
         # Saving model checkpoints
         if val_loss < least_val_loss:
             save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss)
