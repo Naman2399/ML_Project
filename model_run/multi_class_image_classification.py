@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torchsummary import summary
 
-from model_utils.multi_class_image_classification.checkpoints import create_checkpoint_filename, load_checkpoint
+from checkpoints import create_checkpoint_filename, load_checkpoint
 from utils import plot_losses, plot_accuracies
 
 

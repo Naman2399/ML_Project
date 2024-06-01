@@ -8,10 +8,12 @@ import dataset.cifar10 as cifar10
 import dataset.digits_dataset as digits
 import dataset.housing_dataset as housing
 import models.lenet_5 as lenet_5
-from model_utils.multi_class_image_classification.checkpoints import create_checkpoint_filename
-from model_utils.multi_class_image_classification.device import get_available_device
+from checkpoints import create_checkpoint_filename
+from device import get_available_device
 from utils import plot_feature_vs_target, create_dataloaders
 from models import linear_regression as linear_regression
+from models import binary_classification as binary_classification
+from models import multiclass_classification as multiclass_classification
 
 def load_dataset(name)  :
     datasets = {
@@ -74,7 +76,7 @@ def main():
         plot_feature_vs_target(X, y, output_dir="plots", file_prefix="features_vs_target")
 
         # Linear Regression Model
-        import main_modules.main_linear_regression as main_modules
+        import model_run.main_linear_regression as main_modules
         model = linear_regression.LinearRegression(input_size=X.shape[1])
         main_modules.run(model, X, args, device, test_loader, train_loader, val_loader)
 
@@ -89,8 +91,9 @@ def main():
     if args.dataset.lower() == 'breast_cancer' :
 
         # Binary Classification Model
-        import main_modules.main_binary_classification as main_modules
-        model = main_modules.run(X, args, device, test_loader, train_loader, val_loader)
+        model = binary_classification.BinaryClassifier(input_size=X.shape[1])
+        import model_run.binary_classification as main_modules
+        model = main_modules.run(model, X, args, device, test_loader, train_loader, val_loader)
 
     '''
     Multiclass classification 
@@ -102,8 +105,9 @@ def main():
     if args.dataset.lower() == 'digits' :
 
         # Multi-class Classification Model
-        import main_modules.main_multi_class_classification as main_modules
-        model = main_modules.run(X, args, device, test_loader, train_loader, val_loader, y)
+        model = multiclass_classification.SimpleNN(input_size=X.shape[1], num_classes=y.shape[1])
+        import model_run.multi_class_classification as main_modules
+        main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
 
     '''
     Multi-class classification 
@@ -117,7 +121,7 @@ def main():
         elif args.model.lower() == 'lenetv2' :
             model = lenet_5.LeNet5_v2()
 
-        import main_modules.main_image_classification as main_modules
+        import model_run.multi_class_image_classification as main_modules
         main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
 
     writer.close()

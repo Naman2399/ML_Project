@@ -1,9 +1,9 @@
 import torch
 from tqdm import tqdm
-
-from checkpoints import save_checkpoint
-from model_utils.multi_class_image_classification.validation import validation
-
+import torch.nn as nn
+import torch.optim as optim
+from checkpoints import *
+from model_utils.multiclass_classification.validation import validation
 
 # Training function
 def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer, checkpoint_path, current_epoch, least_val_loss, args):

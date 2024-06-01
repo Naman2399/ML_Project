@@ -2,25 +2,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, roc_curve
-
-
-class BinaryClassifier(nn.Module):
-    def __init__(self, input_size):
-        super(BinaryClassifier, self).__init__()
-        self.fc = nn.Linear(input_size, 1)  # One fully connected layer
-        self.sigmoid = nn.Sigmoid()  # Sigmoid activation function
-
-    def forward(self, x):
-        out = self.fc(x)
-        out = self.sigmoid(out)
-        return out
 
 
 # Training Function
-def train_model(model, train_loader, val_loader, num_epochs=50, lr=0.001, update_frequency=20):
-    criterion = nn.BCELoss()
-    optimizer = optim.SGD(model.parameters(), lr=lr)
+def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=50, update_frequency=20):
 
     train_losses = []
     val_losses = []
@@ -88,36 +73,4 @@ def train_model(model, train_loader, val_loader, num_epochs=50, lr=0.001, update
         train_iterator.close()
     return train_losses, val_losses, train_accuracies, val_accuracies
 
-def test_model(model, dataloader):
-    y_true = []
-    y_pred = []
-    total_loss = 0.0
-    total_samples = 0
-    criterion = nn.BCELoss()
 
-
-    with torch.no_grad():
-        for inputs, labels in dataloader:
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
-            total_loss += loss.item() * inputs.size(0)
-            total_samples += inputs.size(0)
-            predicted = (outputs > 0.5).float()  # Convert probabilities to binary predictions
-            y_true.extend(labels.cpu().numpy())
-            y_pred.extend(predicted.cpu().numpy())
-
-    accuracy = accuracy_score(y_true, y_pred)
-    precision = precision_score(y_true, y_pred)
-    recall = recall_score(y_true, y_pred)
-    f1 = f1_score(y_true, y_pred)
-    roc_auc = roc_auc_score(y_true, y_pred)
-    average_loss = total_loss / total_samples
-
-    print(f'Accuracy: {accuracy:.2f}')
-    print(f'Precision: {precision:.2f}')
-    print(f'Recall: {recall:.2f}')
-    print(f'F1 Score: {f1:.2f}')
-    print(f'ROC-AUC Score: {roc_auc:.2f}')
-    print(f'Average Loss: {average_loss:.2f}')
-
-    return accuracy, precision, recall, f1, roc_auc, average_loss

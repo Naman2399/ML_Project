@@ -1,11 +1,7 @@
-import torch
-import torch.nn as nn
-import torch.optim as optim
 from tqdm import tqdm
-import matplotlib.pyplot as plt
+
 from model_utils.linear_regression.validation import validation
 
-from utils import *
 
 # Define training function
 def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=10, update_frequency=20):
