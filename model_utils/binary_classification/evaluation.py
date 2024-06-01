@@ -3,13 +3,11 @@ import torch.nn as nn
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 
-def test(model, dataloader):
+def evaluate(model, dataloader, criterion):
     y_true = []
     y_pred = []
     total_loss = 0.0
     total_samples = 0
-    criterion = nn.BCELoss()
-
 
     with torch.no_grad():
         for inputs, labels in dataloader:

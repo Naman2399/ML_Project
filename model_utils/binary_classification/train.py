@@ -1,27 +1,31 @@
 import torch
-import torch.nn as nn
-import torch.optim as optim
 from tqdm import tqdm
-
+from model_utils.binary_classification.validation import validation
+from utils.checkpoints import *
 
 # Training Function
-def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=50, update_frequency=20):
+def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer, checkpoint_path, current_epoch, least_val_loss, args):
 
+    # Initializing list for  train, validation accuracy and losses
     train_losses = []
     val_losses = []
     train_accuracies = []
     val_accuracies = []
 
-    for epoch in range(num_epochs):
+    for epoch in range(current_epoch, epochs):
+
+        # Training
         model.train()
         running_loss = 0.0
         correct_train = 0
-        total_train = 0
-        train_accuracy = 0  # Initialize train_accuracy outside the inner loop
+        correct = 0
+        total = 0
 
-        train_iterator = tqdm(train_loader, desc=f'Epoch {epoch + 1}/{num_epochs}', leave=False)
+        # Progress Bar
+        pbar = tqdm(train_loader, desc=f"Epoch {epoch + 1}/{epochs}", unit="batch")
 
-        for i, (inputs, labels) in enumerate(train_iterator, 0):
+        for inputs, labels in pbar:
+
             # Forward pass
             outputs = model(inputs)
             loss = criterion(outputs, labels)
@@ -35,42 +39,44 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=50, 
 
             # Compute training accuracy
             predicted = (outputs > 0.5).float()
-            correct_train += (predicted == labels).sum().item()
-            total_train += labels.size(0)
+            correct += (predicted == labels).sum().item()
+            total += labels.size(0)
 
-            train_iterator.set_postfix({'train_loss': running_loss/total_train,  'train_acc': correct_train/total_train})
+            pbar.set_postfix({'Train loss': running_loss/total,  'Train Accuracy': 100 * correct /total})
 
+        train_loss = running_loss / len(train_loader)
+        train_acc = 100 * correct_train / total
+        train_losses.append(train_loss)
+        train_accuracies.append(train_acc)
 
-        avg_train_loss = running_loss / total_train
-        train_losses.append(avg_train_loss)
+        # Validation Loss and accuracy
+        val_loss, val_acc = validation(model, validation_loader, criterion, optimizer, epochs)
+        val_losses.append(val_loss)
+        val_accuracies.append(val_acc)
 
-        train_accuracy = correct_train / total_train
-        train_accuracies.append(train_accuracy)
+        print(f"\nEpoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
+        writer.add_scalar('train_loss', train_loss, epoch + 1)
+        writer.add_scalar('valid_loss', val_loss, epoch + 1)
+        writer.add_scalar('train_acc', train_acc, epoch + 1)
+        writer.add_scalar('valid_acc', val_acc, epoch + 1)
 
-        # Validation loss and accuracy
-        model.eval()
-        val_loss = 0.0
-        correct_val = 0
-        total_val = 0
+        # Always saving best model with least validation loss
+        # Saving model checkpoints
+        if val_loss < least_val_loss:
+            save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss)
+            least_val_loss = val_loss
 
-        with torch.no_grad():
-            for inputs, labels in val_loader:
-                outputs = model(inputs)
-                val_loss += criterion(outputs, labels).item()
+        # Stopping Criteria for model
+        if len(val_losses) >= 10 and stopping_criteria(val_losses[-10:], val_loss):
+            print("Early Stopping .....")
+            break
 
-                # Compute validation accuracy
-                predicted = (outputs > 0.5).float()
-                correct_val += (predicted == labels).sum().item()
-                total_val += labels.size(0)
-
-        avg_val_loss = val_loss / total_val
-        val_losses.append(avg_val_loss)
-
-        val_accuracy = correct_val / total_val
-        val_accuracies.append(val_accuracy)
-
-        train_iterator.set_postfix({'train_loss': avg_train_loss, 'val_loss': avg_val_loss, 'val_acc': val_accuracy, 'train_acc': train_accuracy})
-        train_iterator.close()
     return train_losses, val_losses, train_accuracies, val_accuracies
+
+def stopping_criteria(val_losses, val_loss, patience_level = 0.05) :
+
+    if val_loss <= min(val_losses) + patience_level :
+        return False
+    return  True
 
 

@@ -93,7 +93,7 @@ def main():
         # Binary Classification Model
         model = binary_classification.BinaryClassifier(input_size=X.shape[1])
         import model_run.binary_classification as main_modules
-        model = main_modules.run(model, X, args, device, test_loader, train_loader, val_loader)
+        model = main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
 
     '''
     Multiclass classification 

@@ -25,20 +25,26 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         # Progress Bar
         pbar = tqdm(train_loader, desc=f"Epoch {epoch + 1}/{epochs}", unit="batch")
         for inputs, labels in pbar:
-            optimizer.zero_grad()
+
+            # Forward pass
             outputs = model(inputs)
             loss = criterion(outputs, labels)
+
+            # Backward pass and optimization
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
             running_loss += loss.item()
+
+            # Computing training accuracy
             _, predicted = torch.max(outputs, 1)
             _, true_labels = torch.max(labels, 1)
             total += labels.size(0)
             correct += (predicted == true_labels).sum().item()
 
             # Adding details in progress bar as postfix
-            pbar.set_postfix({'Train Loss': running_loss / len(train_loader), 'Train Accuracy': 100 * correct / total})
+            pbar.set_postfix({'Train Loss': running_loss / total, 'Train Accuracy': 100 * correct / total})
 
         train_loss = running_loss / len(train_loader)
         train_acc = 100 * correct / total

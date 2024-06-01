@@ -1,10 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
-from tqdm import tqdm
-import matplotlib.pyplot as plt
 
-from utils import *
 
 def test(model, test_loader):
     criterion = nn.MSELoss()  # Mean squared error loss
