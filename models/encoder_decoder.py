@@ -16,3 +16,6 @@ class EncoderDecoder(nn.Module):
     def weight_typing(self):
         # Weight Tying
         self.decoder.weight = nn.Parameter(self.encoder.weight.transpose(0, 1))
+
+    def get_encoder_weights(self) :
+        return self.encoder.weight

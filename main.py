@@ -15,6 +15,7 @@ from models import linear_regression as linear_regression
 from models import binary_classification as binary_classification
 from models import multiclass_classification as multiclass_classification
 from utils.func_utils import remove_folder_content
+from models import encoder_decoder as encoder_decoder
 
 
 def load_dataset(name)  :
@@ -29,7 +30,9 @@ def load_dataset(name)  :
 def main():
     parser = argparse.ArgumentParser(description="Describe dataset details")
     parser.add_argument("--dataset", type=str, help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10')")
-    parser.add_argument("--model", type=str, help="Name of the model to use (e.g., 'linear_reg', 'binary_class', 'multi_class', 'lenet', 'lenetv2')")
+    parser.add_argument("--model", type=str,
+                        help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
+                             "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
@@ -109,9 +112,17 @@ def main():
     if args.dataset.lower() == 'digits' :
 
         # Multi-class Classification Model
-        model = multiclass_classification.SimpleNN(input_size=X.shape[1], num_classes=y.shape[1])
-        import model_run.multi_class_classification as main_modules
-        main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
+        if args.model.lower() == 'multi_class' :
+            model = multiclass_classification.SimpleNN(input_size=X.shape[1], num_classes=y.shape[1])
+            import model_run.multi_class_classification as main_modules
+            main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
+
+        # Encoder decoder Model
+        if args.model.lower() == 'encoder_decoder' :
+            model = encoder_decoder.EncoderDecoder(input_size=X.shape[1], hidden_size= 10)
+            import model_run.encoder_decoder as main_modules
+            main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
+
 
     '''
     Multi-class classification 

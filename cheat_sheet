@@ -20,6 +20,9 @@ SVM
 PCA
 .ipynb file is there in pca
 
+Encoder Decoder
+python main.py --dataset digits --model encoder_decoder --epochs 100 --lr 0.0005
+
 Tensorboard
 tensorboard --logdir=runs
 

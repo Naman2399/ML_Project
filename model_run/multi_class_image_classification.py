@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torchsummary import summary
 
+import model_utils.multi_class_image_classification.train as training
 from utils.checkpoints import create_checkpoint_filename, load_checkpoint
 from utils.data_utils import plot_losses, plot_accuracies
 
@@ -41,7 +42,6 @@ def run(X, args, device, model, test_loader, train_loader, val_loader, writer):
         least_val_loss = val_loss
 
     # Model Training and Validation
-    import model_utils.multi_class_image_classification.train as training
     train_losses, train_accuracies, val_losses, val_accuracies = training.train(model,
                                                                                 train_loader=train_loader,
                                                                                 validation_loader=val_loader,

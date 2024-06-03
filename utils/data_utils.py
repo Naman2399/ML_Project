@@ -138,6 +138,33 @@ def plot_accuracies(train_accuracies, val_accuracies, output_dir="plots", file_n
     plt.savefig(os.path.join(output_dir, file_name))
     plt.close()
 
+def plot_weights(weights, output_dir="plots", file_name="weights.png"):
+    '''
+
+    Args:
+        weights: (N * d) dimension where the N denotes weights collected at different time stamp
+
+    Returns:
+        Plot figure
+
+    '''
+    x_scalars = [i+1 for i in range(weights.shape[1])]
+    for i in range(weights.shape[0]) :
+        plt.plot(x_scalars, weights[i].detach().cpu().numpy())
+    plt.xlabel('Dimension of Weights reshape to 1D')
+    plt.ylabel('Weights')
+    plt.title('Weights visualization at different time step')
+    plt.legend()
+    plt.tight_layout()
+
+    # Ensure output directory exists
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Save the plot as an image
+    plt.savefig(os.path.join(output_dir, file_name))
+    plt.close()
+
 def mean_absolute_error(model, test_loader):
     """
     Compute the mean absolute error (MAE) using the model and test loader.
