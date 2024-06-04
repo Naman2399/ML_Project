@@ -2,6 +2,8 @@ import torch
 from tqdm import tqdm
 from utils.checkpoints import *
 from model_utils.encoder_decoder import validation
+from utils.tensorboard_utils import weight_histograms_linear
+
 
 # Training function
 def train(model, train_loader, validation_loader, criterion, optimizer, epochs, writer, checkpoint_path, current_epoch, least_val_loss, args):
@@ -50,9 +52,10 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         writer.add_scalar('train_loss', train_loss, epoch + 1)
         writer.add_scalar('valid_loss', val_loss, epoch + 1)
 
-        # Get model weights
-        if epoch % 50 == 0:
+        # Plotting Model Weights for Tensorboard
+        if epoch % 20 == 0:
             weights.append(torch.reshape(model.get_encoder_weights(), (-1, 1)).squeeze())
+            weight_histograms_linear(writer= writer, step = epoch, weights = model.get_encoder_weights().detach().cpu().numpy(), layer_number= "encoder")
 
 
         # Always saving best model with least validation loss

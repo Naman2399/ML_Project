@@ -150,7 +150,7 @@ def plot_weights(weights, output_dir="plots", file_name="weights.png"):
     '''
     x_scalars = [i+1 for i in range(weights.shape[1])]
     for i in range(weights.shape[0]) :
-        plt.plot(x_scalars, weights[i].detach().cpu().numpy())
+        plt.plot(x_scalars, weights[i].detach().cpu().numpy(), label = f"Epoch : {i*50}")
     plt.xlabel('Dimension of Weights reshape to 1D')
     plt.ylabel('Weights')
     plt.title('Weights visualization at different time step')
