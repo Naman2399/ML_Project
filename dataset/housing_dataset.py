@@ -55,5 +55,5 @@ def describe_dataset():
     return X_tensor, y_tensor
 
 
-def load_dataset() :
+def load_dataset(args) :
     return describe_dataset()

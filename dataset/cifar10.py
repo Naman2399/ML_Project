@@ -36,5 +36,5 @@ def describe_dataset(batch_size = 256) :
     return combined_data, combined_labels
 
 
-def load_dataset() :
+def load_dataset(args) :
     return describe_dataset()

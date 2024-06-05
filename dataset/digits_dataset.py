@@ -58,5 +58,5 @@ def describe_dataset():
 
     return X, y_one_hot
 
-def load_dataset() :
+def load_dataset(args) :
     return describe_dataset()

@@ -7,7 +7,10 @@ import dataset.breast_cancer_dataset as breast_cancer
 import dataset.cifar10 as cifar10
 import dataset.digits_dataset as digits
 import dataset.housing_dataset as housing
+import dataset.text_corpus_v1 as text_corpus_v1
+import dataset.text_corpus_v2 as text_corpus_v2
 import models.lenet_5 as lenet_5
+import models.rnn as rnn
 from utils.checkpoints import create_checkpoint_filename
 from utils.device import get_available_device
 from utils.data_utils import plot_feature_vs_target, create_dataloaders
@@ -18,27 +21,36 @@ from utils.func_utils import remove_folder_content
 from models import encoder_decoder as encoder_decoder
 
 
-def load_dataset(name)  :
+def load_dataset(name, args)  :
     datasets = {
         'housing': housing.load_dataset,
         'breast_cancer': breast_cancer.load_dataset,
         'digits': digits.load_dataset,
-        'cifar10': cifar10.load_dataset
+        'cifar10': cifar10.load_dataset,
+        'text_corpus_v2' : text_corpus_v2.load_dataset
     }
-    return datasets[name]()
+    return datasets[name](args)
 
 def main():
     parser = argparse.ArgumentParser(description="Describe dataset details")
-    parser.add_argument("--dataset", type=str, help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10')")
+    parser.add_argument("--dataset", type=str,
+                        help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10', "
+                             "'text_corpus_v1', 'text_corpus_v2')")
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
-                             "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder')")
+                             "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
     parser.add_argument("--exp_name", type=str, default="debug", help="Experiment Name")
     parser.add_argument("--ckpt_path", type=str, default="ckpts", help="Load ckpt file for model")
     parser.add_argument("--ckpt_filename", type=str, default=None, help="Load ckpt file for model")
+
+    # Adding parameters for RNNs, LSTMs, GRUs
+    parser.add_argument("--chunk", type=int, default=100, help="Chunk size for model")
+    parser.add_argument("--embed_size", type=int, default= 300, help = "Embedding size for model")
+    parser.add_argument("--hidden_size", type=int, default= 500, help= "Hidden size for model")
+    parser.add_argument("--num_layers", type= int, default= 2, help= "No. of layers to stack for RNNs, LSTMs, GRUs")
 
     args = parser.parse_args()
     writer = SummaryWriter(f"runs/{create_checkpoint_filename(args)}")
@@ -56,16 +68,21 @@ def main():
     '''
     Load Dataset 
     '''
+    print(args.dataset)
     if args.dataset.lower() in ['housing', 'breast_cancer', 'digits', 'cifar10']:
-        X, y = load_dataset(args.dataset.lower())
+        X, y = load_dataset(args.dataset.lower(), args)
+        X = X.to(device)
+        y = y.to(device)
+        train_loader, test_loader, val_loader = create_dataloaders(X, y, batch_size=args.batch, test_frac=0.1, val_frac=0.1, device=device)
+
+    elif args.dataset.lower() in ['text_corpus_v1', 'text_corpus_v2' ] :
+        dataset_obj = load_dataset(args.dataset.lower(), args)
+
     else:
         print("Dataset doesn't exist")
         print("Please provide a dataset name using the --dataset argument.")
         return
 
-    X = X.to(device)
-    y = y.to(device)
-    train_loader, test_loader, val_loader = create_dataloaders(X, y, batch_size=args.batch, test_frac=0.1, val_frac=0.1, device = device)
 
     '''
     Dataset ----> Mapping to Models 
@@ -138,6 +155,23 @@ def main():
 
         import model_run.multi_class_image_classification as main_modules
         main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
+
+    '''
+    Text Corpus Data
+        Input Dim : (batch_size, num_of_batches) where each entry is a token representation for that word 
+    '''
+    if args.dataset.lower() == 'text_corpus_v2' :
+        print("OK")
+
+        if args.model.lower() == 'rnn' :
+            model = rnn.RNN(input_size= dataset_obj.n_characters, embedding_size= args.embed_size,
+                            hidden_size= args.hidden_size , output_size= dataset_obj.n_characters,
+                            n_layers= args.num_layers, vocab_size= dataset_obj.n_characters)
+
+            import model_run.rnn as main_modules
+            main_modules.run(dataset= dataset_obj, model= model, args= args, device= device, writer= writer)
+
+        return
 
     writer.close()
     sys.exit()

@@ -23,9 +23,24 @@ PCA
 Encoder Decoder
 python main.py --dataset digits --model encoder_decoder --epochs 100 --lr 0.0005
 
+RNN
+python main.py --dataset text_corpus_v2 --model rnn --epochs 100 --lr 0.0005 --chunk 100 --embed_size 300 --hidden_size 500 --num_layers 2
+
 Tensorboard
 tensorboard --logdir=runs
 
 
+------------------- Links for Reference -----------------------------------
+Tensorboard Weights - https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-use-tensorboard-with-pytorch.md
+Plots two scalars on same chart Tensorboad - https://stackoverflow.com/questions/53581904/how-to-get-two-scalars-on-same-chart-with-tensorboardx
+
+
+Starting with LSTMs -
+Basic for dataset preparation - https://towardsdatascience.com/language-modeling-with-lstms-in-pytorch-381a26badcbf
+
+
+
+
 ------------------------------------- Tasks ----------------------------------------
-1. How to view layer wise params for a model
+1. Re-visit text_corpus_v1
+2. Re-evaluate all the functions together
