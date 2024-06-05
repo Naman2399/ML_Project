@@ -26,6 +26,8 @@ def remove_folder_content(folder_path):
           print(f"Removed file: {file_path}")
       except OSError as e:
         print(f"Error removing file/folder: {file_path} ({e})")
+
+
   else:
     print(f"Folder '{folder_path}' does not exist.")
 

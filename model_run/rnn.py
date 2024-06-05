@@ -24,11 +24,10 @@ def run(dataset : DatasetShakespeare, model, args, device, writer):
 
     model.to(device)
     # Model Summary
-    # summary(model, [(int(input_tensor_example.shape[0]), int(input_tensor_example.shape[1])),
-    #                 (int(hidden_tensor_example.shape[0]), int(hidden_tensor_example.shape[1]))])
+    # summary(model, [(input_tensor_example.shape[0], input_tensor_example.shape[1]), (hidden_tensor_example.shape[0], hidden_tensor_example.shape[1], hidden_tensor_example.shape[2])])
 
     # Tensorboard - adding model
-    writer.add_graph(model, (input_tensor_example, hidden_tensor_example))
+    writer.add_graph(model, [input_tensor_example, hidden_tensor_example])
 
     # Define loss function and optimizer
     criterion = nn.CrossEntropyLoss()
