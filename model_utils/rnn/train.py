@@ -30,7 +30,7 @@ def train(model, dataset, criterion, optimizer, epochs, writer, checkpoint_path,
 
         # Backward Propagation
         optimizer.zero_grad()
-        loss = criterion(target_one_hot, output_hat)
+        loss = criterion(output_hat, target_one_hot)
         train_loss = loss.item()/args.batch
         loss.backward()
         optimizer.step()
