@@ -38,6 +38,11 @@ Plots two scalars on same chart Tensorboad - https://stackoverflow.com/questions
 Starting with LSTMs -
 Basic for dataset preparation - https://towardsdatascience.com/language-modeling-with-lstms-in-pytorch-381a26badcbf
 
+--------------------------- Conda env creation ---------------
+pip freeze > pip_list.txt
+python convert_env.py
+conda env create -f environment.yml
+
 
 
 
