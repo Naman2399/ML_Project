@@ -67,6 +67,7 @@ def main():
     # Example usage
     device = get_available_device()
     print(f"Using device: {device}")
+    args.device = device
 
     '''
     Load Dataset 
@@ -175,7 +176,10 @@ def main():
             model = alexnet.AlexNet()
 
         import model_run.multi_class_image_classification as main_modules
-        main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
+        for images, labels in dataloader_train :
+            X = images
+            break
+        main_modules.run(X, args, device, model, dataloader_test, dataloader_train, dataloader_valid, writer)
 
 
     '''

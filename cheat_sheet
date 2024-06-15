@@ -26,6 +26,11 @@ python main.py --dataset digits --model encoder_decoder --epochs 100 --lr 0.0005
 RNN
 python main.py --dataset text_corpus_v2 --model rnn --epochs 100 --lr 0.0005 --chunk 100 --embed_size 300 --hidden_size 500 --num_layers 2
 
+
+Models
+WildCats
+
+python main.py --dataset wild_cats --model alexnet --epochs 100 --lr 0.0005 --batch 256
 Tensorboard
 tensorboard --logdir=runs
 

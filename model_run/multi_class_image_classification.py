@@ -13,10 +13,10 @@ from utils.data_utils import plot_losses, plot_accuracies
 def run(X, args, device, model, test_loader, train_loader, val_loader, writer):
 
     model.to(device)
-    summary(model, (X.shape[1], X.shape[2], X.shape[3],))
+    summary(model, (X.shape[1], X.shape[2], X.shape[3]))
 
     # Tensorboard - adding model
-    input_tensor_example = torch.rand(((X.shape[1], X.shape[2], X.shape[3])))
+    input_tensor_example = torch.rand(X.shape)
     input_tensor_example = input_tensor_example.to(device)
     print("Input Tensor Example : ", input_tensor_example.shape)
     writer.add_graph(model, input_tensor_example)
@@ -59,7 +59,7 @@ def run(X, args, device, model, test_loader, train_loader, val_loader, writer):
     # Test and evaluation and confusion matrix
     import model_utils.multi_class_image_classification.evaluation as evaluation
     criterion = nn.CrossEntropyLoss()
-    test_accuracy, test_loss, confusion = evaluation.evaluate(model, test_loader, criterion=criterion)
+    test_accuracy, test_loss, confusion = evaluation.evaluate(model, test_loader, criterion=criterion, args= args)
     print(f"Test Accuracy: {test_accuracy:.2f}%, Test Loss: {test_loss:.4f}")
     print("Confusion Matrix:")
     print(confusion)

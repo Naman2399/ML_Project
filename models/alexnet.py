@@ -3,6 +3,7 @@ class AlexNet(nn.Module):
     def __init__(self, num_classes=10):
         super(AlexNet, self).__init__()
         self.layer1 = nn.Sequential(
+            nn.ConstantPad2d((1, 2, 1, 2), value=0),
             nn.Conv2d(3, 96, kernel_size=11, stride=4, padding=0),
             nn.BatchNorm2d(96),
             nn.ReLU(),
@@ -34,7 +35,8 @@ class AlexNet(nn.Module):
             nn.Linear(4096, 4096),
             nn.ReLU())
         self.fc2 = nn.Sequential(
-            nn.Linear(4096, num_classes))
+            nn.Linear(4096, num_classes),
+            nn.Softmax())
 
     def forward(self, x):
         out = self.layer1(x)
@@ -46,5 +48,4 @@ class AlexNet(nn.Module):
         out = self.fc(out)
         out = self.fc1(out)
         out = self.fc2(out)
-        out = nn.Softmax(out)
         return out

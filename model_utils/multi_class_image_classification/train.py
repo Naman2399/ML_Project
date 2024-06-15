@@ -26,6 +26,8 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         pbar = tqdm(train_loader, desc=f"Epoch {epoch + 1}/{epochs}", unit="batch")
         for inputs, labels in pbar:
 
+            inputs = inputs.to(args.device)
+            labels = labels.to(args.device)
             # Forward pass
             outputs = model(inputs)
             loss = criterion(outputs, labels)
@@ -51,7 +53,7 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         train_losses.append(train_loss)
         train_accuracies.append(train_acc)
 
-        val_loss, val_acc = validation(model, validation_loader, criterion, optimizer, epochs)
+        val_loss, val_acc = validation(model, validation_loader, criterion, optimizer, epochs, args)
         val_losses.append(val_loss)
         val_accuracies.append(val_acc)
 

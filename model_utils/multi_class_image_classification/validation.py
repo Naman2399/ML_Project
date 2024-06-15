@@ -1,5 +1,5 @@
 import torch
-def validation(model, validation_loader, criterion, optimizer, epochs):
+def validation(model, validation_loader, criterion, optimizer, epochs, args):
 
     # Validation
     model.eval()
@@ -8,6 +8,8 @@ def validation(model, validation_loader, criterion, optimizer, epochs):
     total = 0
     with torch.no_grad():
         for inputs, labels in validation_loader:
+            inputs = inputs.to(args.device)
+            labels = labels.to(args.device)
             outputs = model(inputs)
             loss = criterion(outputs, labels)
             val_loss += loss.item()

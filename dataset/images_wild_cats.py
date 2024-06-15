@@ -22,6 +22,7 @@ class CustomDataset(torch.utils.data.Dataset):
         path, label = self.path_label[idx]
         img = Image.open(path).convert('RGB')
         label = torch.nn.functional.one_hot(torch.tensor(label), num_classes= self.num_classes)
+        label = label.float()
 
         if self.transform is not None:
             img = self.transform(img)

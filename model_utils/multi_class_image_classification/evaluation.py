@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-def evaluate(model, data_loader, criterion):
+def evaluate(model, data_loader, criterion, args):
     model.eval()
     total_loss = 0.0
     correct = 0
@@ -12,6 +12,8 @@ def evaluate(model, data_loader, criterion):
 
     with torch.no_grad():
         for inputs, labels in data_loader:
+            inputs = inputs.to(args.device)
+            labels = labels.to(args.device)
             outputs = model(inputs)
             loss = criterion(outputs, labels)
             total_loss += loss.item()
