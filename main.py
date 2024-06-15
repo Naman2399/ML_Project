@@ -1,17 +1,20 @@
 import argparse
 import sys
 
+import torch
 from torch.utils.tensorboard import SummaryWriter
 
 import dataset.breast_cancer_dataset as breast_cancer
 import dataset.cifar10 as cifar10
 import dataset.digits_dataset as digits
 import dataset.housing_dataset as housing
-import dataset.text_corpus_v2 as text_corpus_v2
 import dataset.images_wild_cats as wild_cats
+import dataset.text_corpus_v2 as text_corpus_v2
+import models.alexnet as alexnet
 import models.lenet_5 as lenet_5
 import models.rnn as rnn
-import models.alexnet as alexnet
+import models.vgg16 as vgg16
+import models.vgg19 as vgg19
 from models import binary_classification as binary_classification
 from models import encoder_decoder as encoder_decoder
 from models import linear_regression as linear_regression
@@ -34,6 +37,11 @@ def load_dataset(name, args)  :
     return datasets[name](args)
 
 def main():
+
+    # Clearing cuda cache
+    torch.cuda.empty_cache()
+
+    # Parser arguments
     parser = argparse.ArgumentParser(description="Describe dataset details")
     parser.add_argument("--dataset", type=str,
                         help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10', "
@@ -41,7 +49,7 @@ def main():
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
-                             "'alexnet')")
+                             "'alexnet', 'vgg16', 'vgg19')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
@@ -175,10 +183,17 @@ def main():
         if args.model.lower() == 'alexnet' :
             model = alexnet.AlexNet()
 
-        import model_run.multi_class_image_classification as main_modules
+        if args.model.lower() == 'vgg16' :
+            model = vgg16.VGG16()
+
+        if args.model.lower() == 'vgg19' :
+            model = vgg19.VGG19()
+
         for images, labels in dataloader_train :
             X = images
             break
+
+        import model_run.multi_class_image_classification as main_modules
         main_modules.run(X, args, device, model, dataloader_test, dataloader_train, dataloader_valid, writer)
 
 

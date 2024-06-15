@@ -11,7 +11,7 @@ def create_checkpoint_filename(args):
       str: The generated checkpoint filename.
   """
 
-  filename = f"{args.exp_name}_{args.dataset}_{args.model}_lr_{args.lr}.pt"
+  filename = f"{args.exp_name}_{args.dataset}_{args.model}_lr_{args.lr}_bs_{args.batch}_epochs_{args.epochs}.pt"
   return filename
 
 def save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss):
