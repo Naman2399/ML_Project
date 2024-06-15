@@ -11,6 +11,7 @@ import dataset.text_corpus_v2 as text_corpus_v2
 import dataset.images_wild_cats as wild_cats
 import models.lenet_5 as lenet_5
 import models.rnn as rnn
+import models.alexnet as alexnet
 from models import binary_classification as binary_classification
 from models import encoder_decoder as encoder_decoder
 from models import linear_regression as linear_regression
@@ -39,7 +40,8 @@ def main():
                              "'text_corpus_v1', 'text_corpus_v2' ,'wild_cats')")
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
-                             "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm')")
+                             "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
+                             "'alexnet')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
@@ -166,6 +168,15 @@ def main():
     Input dim - (N, 3, 224, 224)
     Labels dim - (N, 10)
     '''
+    if args.dataset.lower() == 'wild_cats' :
+        print("OK")
+
+        if args.model.lower() == 'alexnet' :
+            model = alexnet.AlexNet()
+
+        import model_run.multi_class_image_classification as main_modules
+        main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
+
 
     '''
     Text Corpus Data
