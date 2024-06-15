@@ -7,18 +7,18 @@ import dataset.breast_cancer_dataset as breast_cancer
 import dataset.cifar10 as cifar10
 import dataset.digits_dataset as digits
 import dataset.housing_dataset as housing
-import dataset.text_corpus_v1 as text_corpus_v1
 import dataset.text_corpus_v2 as text_corpus_v2
+import dataset.images_wild_cats as wild_cats
 import models.lenet_5 as lenet_5
 import models.rnn as rnn
-from utils.checkpoints import create_checkpoint_filename
-from utils.device import get_available_device
-from utils.data_utils import plot_feature_vs_target, create_dataloaders
-from models import linear_regression as linear_regression
 from models import binary_classification as binary_classification
-from models import multiclass_classification as multiclass_classification
-from utils.func_utils import remove_folder_content
 from models import encoder_decoder as encoder_decoder
+from models import linear_regression as linear_regression
+from models import multiclass_classification as multiclass_classification
+from utils.checkpoints import create_checkpoint_filename
+from utils.data_utils import plot_feature_vs_target, create_dataloaders
+from utils.device import get_available_device
+from utils.func_utils import remove_folder_content
 
 
 def load_dataset(name, args)  :
@@ -27,7 +27,8 @@ def load_dataset(name, args)  :
         'breast_cancer': breast_cancer.load_dataset,
         'digits': digits.load_dataset,
         'cifar10': cifar10.load_dataset,
-        'text_corpus_v2' : text_corpus_v2.load_dataset
+        'text_corpus_v2' : text_corpus_v2.load_dataset,
+        'wild_cats' : wild_cats.load_dataset
     }
     return datasets[name](args)
 
@@ -35,7 +36,7 @@ def main():
     parser = argparse.ArgumentParser(description="Describe dataset details")
     parser.add_argument("--dataset", type=str,
                         help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10', "
-                             "'text_corpus_v1', 'text_corpus_v2')")
+                             "'text_corpus_v1', 'text_corpus_v2' ,'wild_cats')")
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm')")
@@ -77,6 +78,9 @@ def main():
 
     elif args.dataset.lower() in ['text_corpus_v1', 'text_corpus_v2' ] :
         dataset_obj = load_dataset(args.dataset.lower(), args)
+
+    elif args.dataset.lower() in ['wild_cats'] :
+        dataloader_train, dataloader_valid, dataloader_test = load_dataset(args.dataset.lower(), args)
 
     else:
         print("Dataset doesn't exist")
@@ -155,6 +159,13 @@ def main():
 
         import model_run.multi_class_image_classification as main_modules
         main_modules.run(X, args, device, model, test_loader, train_loader, val_loader, writer)
+
+
+    '''
+    Multi-class classification 
+    Input dim - (N, 3, 224, 224)
+    Labels dim - (N, 10)
+    '''
 
     '''
     Text Corpus Data
