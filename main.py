@@ -56,6 +56,7 @@ def main():
     parser.add_argument("--exp_name", type=str, default="debug", help="Experiment Name")
     parser.add_argument("--ckpt_path", type=str, default="ckpts", help="Load ckpt file for model")
     parser.add_argument("--ckpt_filename", type=str, default=None, help="Load ckpt file for model")
+    parser.add_argument("--dataset_path", type = str, default=None, help ="Image cat files")
 
     # Adding parameters for RNNs, LSTMs, GRUs
     parser.add_argument("--chunk", type=int, default=100, help="Chunk size for model")

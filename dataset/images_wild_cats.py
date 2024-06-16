@@ -100,10 +100,10 @@ def describe_dataset(args) :
 
     # Adding directory paths
 
-    path = 'D:\\Placement\\ML_Project\\data\\images_wild_cats_10'
-    train_dir = path + '\\train'
-    valid_dir = path + '\\valid'
-    test_dir = path + '\\test'
+    path = args.dataset_path
+    train_dir = os.path.join(args.dataset_path, 'train' )
+    valid_dir = os.path.join(args.dataset_path, 'valid' )
+    test_dir = os.path.join(args.dataset_path, 'test' )
 
     # Adding classes and paths for train, valid, test
 
