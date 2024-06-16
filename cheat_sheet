@@ -35,6 +35,11 @@ python main.py --dataset text_corpus_v2 --model rnn --epochs 100 --lr 0.0005 --c
 Models
 WildCats
 
+----- Local ----------
+python main.py --dataset wild_cats --model alexnet --epochs 1 --lr 0.0005 --batch 256 --dataset_path D:/Placement/ML_Project/data/images_wild_cats_10
+
+
+----- DGX -----------
 python main.py --dataset wild_cats --model alexnet --epochs 200 --lr 0.0005 --batch 256 --dataset_path /data/home/karmpatel/karm_8T/naman/demo/images_wild_cats_10
 python main.py --dataset wild_cats --model vgg16 --epochs 1 --lr 0.0005 --batch 32
 python main.py --dataset wild_cats --model vgg19 --epochs 1 --lr 0.0005 --batch 32

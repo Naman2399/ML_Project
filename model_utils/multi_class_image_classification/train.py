@@ -28,6 +28,7 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
 
             inputs = inputs.to(args.device)
             labels = labels.to(args.device)
+
             # Forward pass
             outputs = model(inputs)
             loss = criterion(outputs, labels)

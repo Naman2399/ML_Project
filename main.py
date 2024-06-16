@@ -49,7 +49,7 @@ def main():
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
-                             "'alexnet', 'vgg16', 'vgg19')")
+                             "'alexnet', 'vgg16', 'vgg19', 'inception')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")

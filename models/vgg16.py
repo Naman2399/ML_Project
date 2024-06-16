@@ -56,8 +56,7 @@ class VGG16(nn.Module):
             nn.Dropout(),
             nn.Linear(4096, 4096),  # Adjust based on your final output size
             nn.ReLU(inplace=True),
-            nn.Linear(4096, num_classes),
-            nn.Softmax() # Output layer for your number of classes
+            nn.Linear(4096, num_classes) # Output layer for your number of classes
         )
 
     def forward(self, x):
