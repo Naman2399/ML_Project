@@ -31,6 +31,10 @@ Models
 WildCats
 
 python main.py --dataset wild_cats --model alexnet --epochs 100 --lr 0.0005 --batch 256
+python main.py --dataset wild_cats --model vgg16 --epochs 1 --lr 0.0005 --batch 32
+python main.py --dataset wild_cats --model vgg19 --epochs 1 --lr 0.0005 --batch 32
+
+
 Tensorboard
 tensorboard --logdir=runs
 
