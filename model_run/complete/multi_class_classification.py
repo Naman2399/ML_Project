@@ -26,18 +26,18 @@ def run(X, args, device, model, test_loader, train_loader, val_loader, writer):
     least_val_loss = float('inf')
 
     # Checkpoint filename
-    if args.ckpt_filename is None:
-        # Create new ckpts file
-        checkpoint_filename = create_checkpoint_filename(args)
-        checkpoint_path = os.path.join(args.ckpt_path, checkpoint_filename)
-
-    else:
+    if args.ckpt_filename is not None:
         print("Loading contents from checkpoints")
         # Load model, optimizer, epoch from checkpoints
-        checkpoint_path = os.path.join(args.ckpt_path, args.ckpt_filename)
-        model, optimizer, current_epoch, val_loss = load_checkpoint(model, optimizer, checkpoint_path=checkpoint_path)
+        checkpoint_filename = args.ckpt_filename
+        model, optimizer, current_epoch, val_loss = load_checkpoint(model, optimizer,
+                                                                    checkpoint_path=checkpoint_filename)
         current_epoch += 1
         least_val_loss = val_loss
+
+    # Update ckpts file name
+    checkpoint_filename = create_checkpoint_filename(args)
+    checkpoint_path = os.path.join(args.ckpt_path, checkpoint_filename)
 
     # Model Training and Validation
     train_losses, train_accuracies, val_losses, val_accuracies = training.train(model,
