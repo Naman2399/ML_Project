@@ -57,7 +57,7 @@ def main():
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
     parser.add_argument("--exp_name", type=str, default="debug", help="Experiment Name")
-    parser.add_argument("--ckpt_path", type=str, default="ckpts", help="Load ckpt file for model")
+    parser.add_argument("--ckpt_path", type=str, default="/data/home/karmpatel/karm_8T/naman/demo/ckpts", help="Load ckpt file for model")
     parser.add_argument("--ckpt_filename", type=str, default=None, help="Load ckpt file for model")
     parser.add_argument("--dataset_path", type = str, default=None, help ="Image cat files")
 
@@ -68,7 +68,7 @@ def main():
     parser.add_argument("--num_layers", type= int, default= 2, help= "No. of layers to stack for RNNs, LSTMs, GRUs")
 
     args = parser.parse_args()
-    writer = SummaryWriter(f"runs/{create_checkpoint_filename(args)}")
+    writer = SummaryWriter(f"/data/home/karmpatel/karm_8T/naman/demo/runs/{create_checkpoint_filename(args)}")
 
     # Remove folder contents
     # remove_folder_content(f"runs/{create_checkpoint_filename(args)}")

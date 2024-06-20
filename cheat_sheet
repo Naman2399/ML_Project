@@ -67,6 +67,10 @@ python convert_env.py
 conda env create -f environment.yml
 
 
+-------------------------- Symbolic Links for DGX -----------------
+ln -s /data/home/karmpatel/karm_8T/naman/demo/ckpts/* /raid/home/namanmalpani/final_yr/ML_Project/ckpts
+ln -s /data/home/karmpatel/karm_8T/naman/demo/data/* /raid/home/namanmalpani/final_yr/ML_Project/data
+ln -s /data/home/karmpatel/karm_8T/naman/demo/runs/* /raid/home/namanmalpani/final_yr/ML_Project/runs
 
 
 ------------------------------------- Tasks ----------------------------------------
