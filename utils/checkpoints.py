@@ -31,6 +31,36 @@ def epoch_completed(args):
 
   return final_epoch_num, ckpt_file_name
 
+def get_file_checkpoints(args) :
+
+  '''
+
+  Args:
+    args: args
+
+  Returns:
+    List of all checkpoints which are saved
+
+  '''
+  epoch_ckpts = {}  # Key as epoch and value will be as filename path
+
+  try :
+    # Check the epochs which are already computed
+    file_name = create_checkpoint_filename(args)
+    dir_path = os.path.join(args.ckpt_path, file_name[:-3])
+    print(os.listdir(dir_path))
+    ckpt_file_name = None
+    for file_name in os.listdir(dir_path):
+      match = re.search(r"epoch_(\d+)\.pt", file_name)
+      epoch_num = int(match.group(1))
+      file_path = os.path.join(dir_path, file_name)
+      epoch_ckpts[epoch_num] = file_path
+  except :
+    print()
+  finally:
+    return epoch_ckpts
+
+
 def create_checkpoint_filename(args):
   """
   Creates a checkpoint filename based on arguments.
