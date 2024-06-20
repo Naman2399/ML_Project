@@ -130,6 +130,6 @@ class Inception(nn.Module):
 
         x = self.linear(x)
 
-        return x, y, z
+        return x
 
 

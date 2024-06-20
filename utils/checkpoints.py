@@ -27,7 +27,7 @@ def epoch_completed(args):
         ckpt_file_name = os.path.join(dir_path, str(file_name))
   except :
     final_epoch_num = 0
-    ckpt_file_name = None 
+    ckpt_file_name = None
 
   return final_epoch_num, ckpt_file_name
 

@@ -17,6 +17,9 @@ import models.lenet_5 as lenet_5
 import models.rnn as rnn
 import models.vgg16 as vgg16
 import models.vgg19 as vgg19
+import models.resnet_18 as resnet18
+import models.inception as inception
+from models.resnet_18 import BasicBlock
 from models import binary_classification as binary_classification
 from models import encoder_decoder as encoder_decoder
 from models import linear_regression as linear_regression
@@ -52,7 +55,7 @@ def main():
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
-                             "'alexnet', 'vgg16', 'vgg19', 'inception')")
+                             "'alexnet', 'vgg16', 'vgg19', 'inception', 'resnet18')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
@@ -197,6 +200,12 @@ def main():
 
         if args.model.lower() == 'vgg19' :
             model = vgg19.VGG19()
+
+        if args.model.lower() == 'inception' :
+            model = inception.Inception()
+
+        if args.model.lower() == 'resnet18' :
+            model = resnet18.ResNet18(img_channels=3, num_layers= 18, block= BasicBlock, num_classes=10)
 
         for images, labels in dataloader_train :
             X = images
