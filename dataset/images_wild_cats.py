@@ -111,21 +111,21 @@ def describe_dataset(args) :
     paths_train = []
     for dirname, _, filenames in os.walk(train_dir):
         for filename in filenames:
-            classes_train += [dirname.split('\\')[-1]]
+            classes_train += [dirname.split('/')[-1]]
             paths_train += [(os.path.join(dirname, filename))]
 
     classes_valid = []
     paths_valid = []
     for dirname, _, filenames in os.walk(valid_dir):
         for filename in filenames:
-            classes_valid += [dirname.split('\\')[-1]]
+            classes_valid += [dirname.split('/')[-1]]
             paths_valid += [(os.path.join(dirname, filename))]
 
     classes_test = []
     paths_test = []
     for dirname, _, filenames in os.walk(test_dir):
         for filename in filenames:
-            classes_test += [dirname.split('\\')[-1]]
+            classes_test += [dirname.split('/')[-1]]
             paths_test += [(os.path.join(dirname, filename))]
 
     # Printing different categories for Wild cats

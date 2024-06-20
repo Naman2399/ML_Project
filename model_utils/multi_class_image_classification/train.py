@@ -80,6 +80,8 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
 
 def stopping_criteria(val_losses, val_loss, patience_level = 0.05) :
 
+    return False
+
     if val_loss <= min(val_losses) + patience_level :
         return False
     return  True

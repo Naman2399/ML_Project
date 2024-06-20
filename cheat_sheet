@@ -13,7 +13,7 @@ Multi-class Classification
 python main.py --dataset digits --model multi_class
 
 Supervised Learning - Categorical (For CIFAR 10 dataset)
-python main.py --dataset cifar10 --model lenet --batch 512 --epcoh 100 --lr 0.0005
+python main.py --dataset cifar10 --model lenet --batch 512 --epochs 100 --lr 0.0005
 python main.py --dataset cifar10 --model lenet --batch 512 --epochs 30 --lr 0.0005 --ckpt_filename debug_cifar10_lenet_lr_0.0005.pt
 
 Random Forest
@@ -40,14 +40,17 @@ python main.py --dataset wild_cats --model alexnet --epochs 1 --lr 0.0005 --batc
 
 
 ----- DGX -----------
-python main.py --dataset wild_cats --model alexnet --epochs 200 --lr 0.0005 --batch 256 --dataset_path /data/home/karmpatel/karm_8T/naman/demo/images_wild_cats_10
-python main.py --dataset wild_cats --model vgg16 --epochs 1 --lr 0.0005 --batch 32
-python main.py --dataset wild_cats --model vgg19 --epochs 1 --lr 0.0005 --batch 32
+python main.py --dataset wild_cats --model alexnet --epochs 100 --lr 0.0005 --batch 256 --dataset_path /data/home/karmpatel/karm_8T/naman/demo/images_wild_cats_10
+python main.py --dataset wild_cats --model vgg16 --epochs 100 --lr 0.0005 --batch 32 --dataset_path /data/home/karmpatel/karm_8T/naman/demo/images_wild_cats_10
+python main.py --dataset wild_cats --model vgg19 --epochs 100 --lr 0.0005 --batch 32
+python main.py --dataset wild_cats --model inception --epochs 100 --lr 0.0005 --batch 32
+
 
 
 Tensorboard
 tensorboard --logdir=runs
 
+tensorboard --logdir=./ --host=10.192.12.61 --port=6001
 
 ------------------- Links for Reference -----------------------------------
 Tensorboard Weights - https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-use-tensorboard-with-pytorch.md

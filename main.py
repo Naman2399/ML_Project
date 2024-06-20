@@ -1,8 +1,10 @@
 import argparse
+import os.path
 import sys
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
+import re
 
 import dataset.breast_cancer_dataset as breast_cancer
 import dataset.cifar10 as cifar10
@@ -19,11 +21,12 @@ from models import binary_classification as binary_classification
 from models import encoder_decoder as encoder_decoder
 from models import linear_regression as linear_regression
 from models import multiclass_classification as multiclass_classification
-from utils.checkpoints import create_checkpoint_filename
+from utils.checkpoints import create_checkpoint_filename, epoch_completed
 from utils.data_utils import plot_feature_vs_target, create_dataloaders
-from utils.device import get_available_device
+from utils.device import check_gpu_availability
 from utils.func_utils import remove_folder_content
 
+torch.cuda.empty_cache()
 
 def load_dataset(name, args)  :
     datasets = {
@@ -68,13 +71,18 @@ def main():
     writer = SummaryWriter(f"runs/{create_checkpoint_filename(args)}")
 
     # Remove folder contents
-    remove_folder_content(f"runs/{create_checkpoint_filename(args)}")
+    # remove_folder_content(f"runs/{create_checkpoint_filename(args)}")
+
+    start_epoch, ckpt_filename = epoch_completed(args)
+    args.start_epoch = start_epoch
+    args.ckpt_filename = ckpt_filename
+
 
     '''
     Device details
     '''
     # Example usage
-    device = get_available_device()
+    device = check_gpu_availability(required_space_gb=2, required_gpus=1)
     print(f"Using device: {device}")
     args.device = device
 
@@ -217,9 +225,6 @@ def main():
 
     writer.close()
     sys.exit()
-
-
-
 
 
 if __name__ == "__main__":
