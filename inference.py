@@ -204,7 +204,7 @@ def main():
             break
 
         import model_run.inference.multi_class_image_classification as main_modules
-        main_modules.run(X, args, device, model, test_loader, writer, epochs_ckpts)
+        main_modules.run(X, args, device, model, dataloader_test, writer, epochs_ckpts)
 
     '''
     Text Corpus Data
