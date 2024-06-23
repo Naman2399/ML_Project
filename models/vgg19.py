@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from torchvision.models.vgg import vgg19
 
 class VGG19(nn.Module):
     def __init__(self, num_classes=10):  # Adjust num_classes for your dataset
@@ -89,4 +90,22 @@ class VGG19(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)  # Flatten for fully connected layers
         x = self.classifier(x)
+        return x
+
+
+class VGG19Pretrain(nn.Module):
+    def __init__(self, num_classes=10):
+        super(VGG19Pretrain, self).__init__()
+        # Load the pretrained VGG16 model (freeze weights by default)
+        self.model = vgg19(weights = 'IMAGENET1K_V1')
+        # Freeze the weights of the pre-trained model (optional)
+        for param in self.model.parameters():
+            param.requires_grad = False  # Freeze pre-trained weights
+
+        # Modify the final layer for your specific number of classes
+        self.model.classifier[6] = nn.Linear(in_features=4096, out_features=num_classes)
+
+    def forward(self, x):
+        # Forward pass through the model
+        x = self.model(x)
         return x

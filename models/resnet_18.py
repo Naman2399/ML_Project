@@ -3,6 +3,7 @@ from typing import Type
 import torch
 import torch.nn as nn
 from torch import Tensor
+from torchvision.models.resnet import resnet18
 
 
 class BasicBlock(nn.Module):
@@ -143,4 +144,22 @@ class ResNet18(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
+        return x
+
+
+class Resnet18Pretrain(nn.Module):
+    def __init__(self, num_classes=10):
+        super(Resnet18Pretrain, self).__init__()
+        # Load the pretrained VGG16 model (freeze weights by default)
+        self.model = resnet18(weights = 'IMAGENET1K_V1')
+        # Freeze the weights of the pre-trained model (optional)
+        for param in self.model.parameters():
+            param.requires_grad = False  # Freeze pre-trained weights
+
+        # Modify the final layer for your specific number of classes
+        self.model.fc = nn.Linear(in_features=512, out_features=num_classes, bias=True)
+
+    def forward(self, x):
+        # Forward pass through the model
+        x = self.model(x)
         return x

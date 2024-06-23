@@ -52,7 +52,8 @@ def main():
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
-                             "'alexnet', 'vgg16', 'vgg19', 'inception', 'resnet18')")
+                             "'alexnet', 'vgg16', 'vgg19', 'inception', 'resnet18', 'vgg16_pretrain_in1k' , "
+                             "'vgg19_pretrain_in1k', 'inception_pretrain_in1k', 'resnet18_pretrain_in1k')")
     parser.add_argument("--batch", type=int, default=256, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
@@ -203,6 +204,16 @@ def main():
 
         if args.model.lower() == 'resnet18' :
             model = resnet18.ResNet18(img_channels=3, num_layers= 18, block= BasicBlock, num_classes=10)
+
+        if args.model.lower() == 'vgg16_pretrain_in1k' :
+            model = vgg16.VGG16Pretrain(num_classes=10)
+
+        if args.model.lower() == 'inception_pretrain_in1k' :
+            model = inception.InceptionPretrain(num_classes=10)
+
+        if args.model.lower() == 'resnet18_pretrain_in1k' :
+            model = resnet18.Resnet18Pretrain(num_classes=10)
+
 
         for images, labels in dataloader_train :
             X = images

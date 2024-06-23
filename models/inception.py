@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
+from torchvision.models.inception import inception_v3
+from utils.image_utils import resize_and_pad
 
+from typing import Type
 
 class ConvBlock(nn.Module):
 
@@ -132,4 +135,27 @@ class Inception(nn.Module):
 
         return x
 
+    def get_model_weights(self) :
+        weights = self.inception3a.tree_by_three.conv.weight
+        return weights
 
+
+
+class InceptionPretrain(nn.Module):
+    def __init__(self, num_classes=10):
+        super(InceptionPretrain, self).__init__()
+        # Load the pretrained VGG16 model (freeze weights by default)
+        self.model = inception_v3(weights = 'IMAGENET1K_V1')
+        self.model.aux_logits = False
+        # Freeze the weights of the pre-trained model (optional)
+        for param in self.model.parameters():
+            param.requires_grad = False  # Freeze pre-trained weights
+
+        # Modify the final layer for your specific number of classes
+        self.model.fc = nn.Linear(in_features=2048, out_features= num_classes, bias= True)
+
+    def forward(self, x):
+        x = resize_and_pad(image_tensor= x, target_size=(299, 299))
+        # Forward pass through the model
+        x = self.model(x)
+        return x

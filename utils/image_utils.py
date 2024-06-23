@@ -1,11 +1,12 @@
 import torch
 from torchvision import transforms
+
 def resize_and_pad(image_tensor, target_size=(299, 299)):
   """
   Resizes and pads a batch of image tensors to the target size.
 
   Args:
-      image_tensor: A PyTorch tensor of shape (batch_size, 3, 224, 244)
+      image_tensor: A PyTorch tensor of shape (batch_size, image_channel, image_height, image_width)
           representing a batch of images.
       target_size: A tuple (height, width) specifying the desired output size.
 
@@ -32,8 +33,11 @@ def resize_and_pad(image_tensor, target_size=(299, 299)):
 
   return padded_image_tensor
 
-# Example usage
-image_tensor = torch.randn(2, 3, 211, 274)  # Example batch of 2 images
-resized_padded_tensor = resize_and_pad(image_tensor)
 
-print(resized_padded_tensor.shape)  # Output: torch.Size([2, 3, 299, 299])
+if __name__ == "__main__" :
+    # Example usage
+    # image_tensor = torch.randn(2, 3, 211, 274)  # Example batch of 2 images
+    # resized_padded_tensor = resize_and_pad(image_tensor)
+    #
+    # print(resized_padded_tensor.shape)  # Output: torch.Size([2, 3, 299, 299])
+    exit()

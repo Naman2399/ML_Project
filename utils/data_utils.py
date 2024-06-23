@@ -101,6 +101,7 @@ def create_dataloader(X, y, batch_size =  256 ) :
     return loader
 
 
+
 def plot_losses(train_losses, val_losses, output_dir="plots", file_name="loss_plot.png"):
     epochs = range(1, len(train_losses) + 1)
     plt.plot(epochs, train_losses, label='Training Loss')
