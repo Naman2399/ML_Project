@@ -1,3 +1,4 @@
+import argparse
 import os
 import torch
 import re
@@ -61,7 +62,7 @@ def get_file_checkpoints(args) :
     return epoch_ckpts
 
 
-def create_checkpoint_filename(args):
+def create_checkpoint_filename(args : argparse.ArgumentParser):
   """
   Creates a checkpoint filename based on arguments.
 
@@ -72,7 +73,11 @@ def create_checkpoint_filename(args):
       str: The generated checkpoint filename.
   """
 
-  filename = f"{args.exp_name}_{args.dataset}_{args.model}_lr_{args.lr}_bs_{args.batch}_epochs_{args.epochs}.pt"
+  if args.model == 'transformer' :
+    filename = f"{args.exp_name}_{args.dataset}_{args.model}_lr_{args.lr}_bs_{args.batch}_epochs_{args.epochs}_seq_len_{args.seq_len}_embed_size_{args.embed_size}.pt"
+  else :
+    filename = f"{args.exp_name}_{args.dataset}_{args.model}_lr_{args.lr}_bs_{args.batch}_epochs_{args.epochs}.pt"
+
   return filename
 
 def save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss):
