@@ -17,8 +17,8 @@ from tokenizers.pre_tokenizers import Whitespace
 
 from pathlib import Path
 
-from dataset.text_corpus_eng_italian.text_corpus_2_dataset import BilingualDataset, causal_mask
-from dataset.text_corpus_eng_italian.text_corpus_config import get_weights_file_path, latest_weights_file_path
+from dataset.dataset_utils_lang_translation.bilingual_dataset import BilingualDataset, causal_mask
+from dataset.dataset_utils_lang_translation.text_corpus_config import get_weights_file_path, latest_weights_file_path
 from models.transformer import build_transformer
 
 def greedy_decode(model, source, source_mask, tokenizer_src, tokenizer_tgt, max_len, device):

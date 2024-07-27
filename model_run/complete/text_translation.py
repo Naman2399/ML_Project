@@ -6,8 +6,8 @@ import torchmetrics
 from torch import nn
 from tqdm import tqdm
 
-from dataset.text_corpus_eng_italian.text_corpus_2_dataset import causal_mask
-from utils.checkpoints import load_checkpoint, create_checkpoint_filename
+from dataset.dataset_utils_lang_translation.bilingual_dataset import causal_mask
+from utils.checkpoints import load_checkpoint, create_checkpoint_filename, save_checkpoint
 
 
 def greedy_decode(model, source, source_mask, tokenizer_src, tokenizer_tgt, max_len, device):
@@ -16,9 +16,12 @@ def greedy_decode(model, source, source_mask, tokenizer_src, tokenizer_tgt, max_
 
     # Precompute the encoder output and reuse it for every step
     encoder_output = model.encode(source, source_mask)
+
     # Initialize the decoder input with the sos token
     decoder_input = torch.empty(1, 1).fill_(sos_idx).type_as(source).to(device)
+
     while True:
+
         if decoder_input.size(1) == max_len:
             break
 
@@ -40,7 +43,7 @@ def greedy_decode(model, source, source_mask, tokenizer_src, tokenizer_tgt, max_
 
     return decoder_input.squeeze(0)
 
-def run_validation(model, validation_ds, tokenizer_src, tokenizer_tgt, max_len, device, print_msg, global_step, writer,
+def run_validation(model, validation_ds, tokenizer_src, tokenizer_tgt, max_len, device, print_msg, epoch, writer,
                    num_examples=2):
 
     model.eval()
@@ -60,7 +63,9 @@ def run_validation(model, validation_ds, tokenizer_src, tokenizer_tgt, max_len, 
         console_width = 80
 
     with torch.no_grad():
+
         for batch in validation_ds:
+
             count += 1
             encoder_input = batch["encoder_input"].to(device)  # (b, seq_len)
             encoder_mask = batch["encoder_mask"].to(device)  # (b, 1, 1, seq_len)
@@ -89,24 +94,24 @@ def run_validation(model, validation_ds, tokenizer_src, tokenizer_tgt, max_len, 
                 break
 
     if writer:
+
         # Evaluate the character error rate
         # Compute the char error rate
         metric = torchmetrics.CharErrorRate()
         cer = metric(predicted, expected)
-        writer.add_scalar('validation cer', cer, global_step)
-        writer.flush()
+        writer.add_scalar('validation/char_error_rate', cer, epoch)
 
         # Compute the word error rate
         metric = torchmetrics.WordErrorRate()
         wer = metric(predicted, expected)
-        writer.add_scalar('validation wer', wer, global_step)
-        writer.flush()
+        writer.add_scalar('validation/word_error_rate', wer, epoch)
 
         # Compute the BLEU metric
         metric = torchmetrics.BLEUScore()
         bleu = metric(predicted, expected)
-        writer.add_scalar('validation BLEU', bleu, global_step)
-        writer.flush()
+        writer.add_scalar('validation/BLEU', bleu, epoch)
+
+    return bleu
 
 def run(args : argparse.ArgumentParser, model, train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt) :
 
@@ -114,6 +119,7 @@ def run(args : argparse.ArgumentParser, model, train_dataloader, val_dataloader,
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, eps=1e-9)
     loss_fn = nn.CrossEntropyLoss(ignore_index=tokenizer_src.token_to_id('[PAD]'), label_smoothing=0.1).to(args.device)
     current_epoch = 0
+    best_blue_score = 0
     global_step = 0
 
     # Checkpoint filename
@@ -122,9 +128,9 @@ def run(args : argparse.ArgumentParser, model, train_dataloader, val_dataloader,
         # Load model, optimizer, epoch from checkpoints
         checkpoint_filename = args.ckpt_filename
         model, optimizer, current_epoch, val_loss = load_checkpoint(model, optimizer,
-                                                                    checkpoint_path=checkpoint_filename)
+                                                                    checkpoint_path=checkpoint_filename)  # Here instead of val loss we are storing blue score
         current_epoch += 1
-        least_val_loss = val_loss
+        best_blue_score = val_loss
 
     # Update ckpts file name
     checkpoint_filename = create_checkpoint_filename(args)
@@ -133,10 +139,10 @@ def run(args : argparse.ArgumentParser, model, train_dataloader, val_dataloader,
     # Model Training and Validation
     for epoch in range(current_epoch, args.epochs):
 
-        # Empty the torch cache
-        torch.cuda.empty_cache()
         # Training Model
         model.train()
+        # Training loss
+        train_loss = 0
 
         batch_iterator = tqdm(train_dataloader, desc=f"Processing Training Data Epoch {epoch}")
         for batch in batch_iterator:
@@ -157,10 +163,9 @@ def run(args : argparse.ArgumentParser, model, train_dataloader, val_dataloader,
             # Compute the loss using a simple cross entropy
             loss = loss_fn(proj_output.view(-1, tokenizer_tgt.get_vocab_size()), label.view(-1))
             batch_iterator.set_postfix({"loss": f"{loss.item():6.3f}"})
+            args.writer.add_scalar('train loss', loss, global_step)
 
-            # Log the loss
-            args.writer.add_scalar('train loss', loss.item(), global_step)
-            args.writer.flush()
+            train_loss += float(f"{loss.item():6.3f}")
 
             # Backpropagate the loss
             loss.backward()
@@ -171,13 +176,13 @@ def run(args : argparse.ArgumentParser, model, train_dataloader, val_dataloader,
 
             global_step += 1
 
+        # Log the loss
+        args.writer.add_scalar('train total loss', train_loss, epoch)
+
         # Run validation at the end of every epoch
-        run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, args.seq_len, args.device, lambda msg: batch_iterator.write(msg), global_step, args.writer)
+        val_blue_score = run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, args.seq_len, args.device, lambda msg: batch_iterator.write(msg), epoch, args.writer)
 
         # Save the model at the end of every epoch
-        torch.save({
-            'epoch': epoch,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'global_step': global_step
-        }, os.makedirs(args.ckpt_path, "debug.pt"))
+        if val_blue_score > best_blue_score :
+            save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss)
+            best_blue_score = val_blue_score

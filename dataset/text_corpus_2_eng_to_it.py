@@ -2,7 +2,7 @@ import argparse
 from datasets import load_dataset as load_dataset_hug_face
 from torch.utils.data import random_split, DataLoader
 
-from dataset.text_corpus_eng_italian.text_corpus_2_dataset import BilingualDataset
+from dataset.dataset_utils_lang_translation.bilingual_dataset import BilingualDataset
 
 from pathlib import Path
 
@@ -14,11 +14,35 @@ from tokenizers.pre_tokenizers import Whitespace
 
 
 def get_all_sentences(ds, lang):
+    '''
+
+    Args:
+        ds: It is raw dataset used form Hugging Face where data is stored in form ---> ds[idx]['translation'][language_name]
+                                                                    ----> language name we can use en : english
+                                                                    ---->                          it : italian
+        lang : as mentioned above in ds parameter, necessary requirement for which parameters we are talking about
+
+    Returns:
+
+    '''
     for item in ds:
         yield item['translation'][lang]
 
 def get_or_build_tokenizer(args : argparse.ArgumentParser, ds, lang : str) :
+
+    '''
+
+    Args:
+        args:  contains all the argumnets needed in main file ---> For more reference refer to main.py
+        ds: dataset are considering ---> ds will generally contain some format where each id from 1 src lang to 1 target lang
+        lang: describe for which langauage we are building tokenizer ---> can be src or dest or can be en to it
+
+    Returns: tokenizer where each word is represented with some id ----> e.g. ant ---> 1 the ---> 2 and so on ....
+
+    '''
+
     tokenizer_path = Path(args.tokenizer_file.format(lang))
+
     if not Path.exists(tokenizer_path):
         # Most code taken from: https://huggingface.co/docs/tokenizers/quicktour
         tokenizer = Tokenizer(WordLevel(unk_token="[UNK]"))
@@ -57,7 +81,6 @@ def load_dataset(args : argparse.ArgumentParser) :
     print(f'Max length of source sentence: {max_len_src}')
     print(f'Max length of target sentence: {max_len_tgt}')
 
-    args.seq_len = max(max_len_src, max_len_tgt) + 1
 
     # Keep 90% for training, 10% for validation
     train_ds_size = int(0.9 * len(ds_raw))

@@ -6,6 +6,10 @@ from torch.utils.data import Dataset
 
 class BilingualDataset(Dataset):
 
+    '''
+
+    '''
+
     def __init__(self, ds, tokenizer_src : tokenizers.Tokenizer, tokenizer_tgt : tokenizers.Tokenizer, src_lang, tgt_lang, seq_len):
         super().__init__()
         self.seq_len = seq_len
@@ -33,9 +37,8 @@ class BilingualDataset(Dataset):
         dec_input_tokens = self.tokenizer_tgt.encode(tgt_text).ids
 
         # Add sos, eos and padding to each sentence
-        enc_num_padding_tokens = self.seq_len - len(enc_input_tokens) - 2  # We will add <s> and </s>
-        # We will only add <s>, and </s> only on the label
-        dec_num_padding_tokens = self.seq_len - len(dec_input_tokens) - 1
+        enc_num_padding_tokens = self.seq_len - len(enc_input_tokens) - 2  # We will add SOS and EOS token to src lang
+        dec_num_padding_tokens = self.seq_len - len(dec_input_tokens) - 1 # We will add only SOS token to tgt lang
 
         # Make sure the number of padding tokens is not negative. If it is, the sentence is too long
         if enc_num_padding_tokens < 0 or dec_num_padding_tokens < 0:

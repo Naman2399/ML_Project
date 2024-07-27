@@ -5,7 +5,7 @@ import torch
 from datasets import load_dataset as load_dataset_hug_face
 from torch.utils.data import random_split
 from torch.utils.tensorboard import SummaryWriter
-from dataset.text_corpus_eng_italian.text_corpus_2_dataset import BilingualDataset, causal_mask
+from dataset.dataset_utils_lang_translation.bilingual_dataset import BilingualDataset, causal_mask
 
 from torch.utils.data import random_split, DataLoader
 
@@ -15,7 +15,7 @@ import dataset.digits_dataset as digits
 import dataset.housing_dataset as housing
 import dataset.images_wild_cats as wild_cats
 import dataset.text_corpus_2_eng_to_it as text_corpus_2_eng_to_it
-import dataset.text_corpus_eng_italian.text_corpus_2 as text_corpus_2
+import dataset.dataset_utils_lang_translation.text_corpus_2 as text_corpus_2
 import models.alexnet as alexnet
 import models.inception as inception
 import models.lenet_5 as lenet_5
@@ -63,8 +63,8 @@ def main():
                              "'vgg19_pretrain_in1k', 'inception_pretrain_in1k', 'resnet18_pretrain_in1k' , "
                              "'transformer')")
     parser.add_argument("--batch", type=int, default=8, help="Enter batch size")
-    parser.add_argument("--epochs", type=int, default=100, help="Enter number of epochs")
-    parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate")
+    parser.add_argument("--epochs", type=int, default=50, help="Enter number of epochs")
+    parser.add_argument("--lr", type=float, default=0.0001, help="Learning Rate")
     parser.add_argument("--exp_name", type=str, default="debug", help="Experiment Name")
     parser.add_argument("--ckpt_path", type=str, default="/data/home/karmpatel/karm_8T/naman/demo/ckpts", help="Load ckpt file for model")
     parser.add_argument("--ckpt_filename", type=str, default=None, help="Load ckpt file for model")
@@ -101,7 +101,7 @@ def main():
     Device details
     '''
     # Example usage
-    device = check_gpu_availability(required_space_gb=2, required_gpus=1)
+    device = check_gpu_availability(required_space_gb=5, required_gpus=1)
     print(f"Using device: {device}")
     args.device = device
 
@@ -262,13 +262,15 @@ def main():
 
     '''
     Text Corpus Data 
-        Input Dime : All the sentences are in English
+        Input  : All the sentences are in English
         Output : All the sentences are in Italian 
     '''
 
+    # Data input details ----> train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt
     if args.dataset.lower() == 'text_corpus_eng_to_it' :
-        # Data input details ----> train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt
+
         model = get_model(args, tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size()).to(device)
+
         import model_run.complete.text_translation as main_modules
         main_modules.run(args, model, train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt)
 

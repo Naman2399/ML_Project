@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from dataset.text_corpus_eng_italian.text_corpus_2 import train_model
+from dataset.dataset_utils_lang_translation.text_corpus_2 import train_model
 
 
 def get_config():
