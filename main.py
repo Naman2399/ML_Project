@@ -12,6 +12,7 @@ import dataset.images_wild_cats as wild_cats
 import dataset.text_corpus_2_eng_to_it as text_corpus_2_eng_to_it
 import dataset.text_corpus_2_eng_to_hi as text_corpus_2_eng_to_hi
 import dataset.text_corpus_2_eng_to_hi_kaggle as text_corpus_2_eng_to_hi_kaggle
+import dataset.cornell_dialogue_dataset as cornell_dialogue_dataset
 import models.alexnet as alexnet
 import models.inception as inception
 import models.lenet_5 as lenet_5
@@ -23,6 +24,7 @@ from models import binary_classification as binary_classification
 from models import encoder_decoder as encoder_decoder
 from models import linear_regression as linear_regression
 from models import multiclass_classification as multiclass_classification
+from models.bert import BERT, BERTLM
 from models.resnet_18 import BasicBlock
 from models.transformer import get_model
 from utils.checkpoints import create_checkpoint_filename, epoch_completed
@@ -40,7 +42,8 @@ def load_dataset(name, args)  :
         'wild_cats' : wild_cats.load_dataset,
         'text_corpus_eng_to_it' : text_corpus_2_eng_to_it.load_dataset,
         'text_corpus_2_eng_to_hi' : text_corpus_2_eng_to_hi.load_dataset,
-        'text_corpus_2_eng_to_hi_kaggle' : text_corpus_2_eng_to_hi_kaggle.load_dataset
+        'text_corpus_2_eng_to_hi_kaggle' : text_corpus_2_eng_to_hi_kaggle.load_dataset,
+        'cornell_dialogue_dataset' : cornell_dialogue_dataset.load_dataset
     }
     return datasets[name](args)
 
@@ -54,14 +57,14 @@ def main():
     parser.add_argument("--dataset", type=str,
                         help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10', "
                              "'wild_cats', 'text_corpus_eng_to_it', 'text_corpus_2_eng_to_hi', "
-                             "'text_corpus_2_eng_to_hi_kaggle')")
+                             "'text_corpus_2_eng_to_hi_kaggle', 'cornell_dialogue_dataset')")
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
                              "'alexnet', 'vgg16', 'vgg19', 'inception', 'resnet18', 'vgg16_pretrain_in1k' , "
                              "'vgg19_pretrain_in1k', 'inception_pretrain_in1k', 'resnet18_pretrain_in1k' , "
-                             "'transformer')")
-    parser.add_argument("--batch", type=int, default=8, help="Enter batch size")
+                             "'transformer', 'bert')")
+    parser.add_argument("--batch", type=int, default=32, help="Enter batch size")
     parser.add_argument("--epochs", type=int, default=50, help="Enter number of epochs")
     parser.add_argument("--lr", type=float, default=0.0001, help="Learning Rate")
     parser.add_argument("--exp_name", type=str, default="debug", help="Experiment Name")
@@ -128,6 +131,9 @@ def main():
 
     elif args.dataset.lower() in ['text_corpus_2_eng_to_hi_kaggle']:
         train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = load_dataset(args.dataset.lower(), args)
+
+    elif args.dataset.lower() in ['cornell_dialogue_dataset'] :
+        train_dataloader, tokenizer = load_dataset(args.dataset.lower(), args)
 
     else:
         print("Dataset doesn't exist")
@@ -303,6 +309,20 @@ def main():
 
         import model_run.complete.text_translation as main_modules
         main_modules.run(args, model, train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt)
+
+    if args.dataset.lower() == 'cornell_dialogue_dataset' :
+        # Data input details ---> train_dataloader, tokenizer
+        bert_model = BERT(
+            vocab_size=len(tokenizer.vocab),
+            d_model=768,
+            n_layers=2,
+            heads=12,
+            dropout=0.1
+        )
+        bert_lm = BERTLM(bert_model, len(tokenizer.vocab))
+
+        import model_run.complete.bert_trainer as main_modules
+        main_modules.run(args, bert_lm, train_dataloader)
 
     writer.close()
     sys.exit()

@@ -83,12 +83,16 @@ def run_validation(model, validation_ds, tokenizer_src, tokenizer_tgt, max_len, 
             expected.append(target_text)
             predicted.append(model_out_text)
 
-            if count <= num_examples:
-                # Print the source, target and model output
+            # Print the source, target and model output
+            print_msg('-' * console_width)
+            print_msg(f"{f'SOURCE: ':>12}{source_text}")
+            print_msg(f"{f'TARGET: ':>12}{target_text}")
+            print_msg(f"{f'PREDICTED: ':>12}{model_out_text}")
+
+            if count == num_examples:
                 print_msg('-' * console_width)
-                print_msg(f"{f'SOURCE: ':>12}{source_text}")
-                print_msg(f"{f'TARGET: ':>12}{target_text}")
-                print_msg(f"{f'PREDICTED: ':>12}{model_out_text}")
+                break
+
 
     if writer:
 
