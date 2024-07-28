@@ -113,7 +113,7 @@ class BERTTrainer:
             }
 
             if i % self.log_freq == 0:
-                data_iter.write(str(post_fix))
+                data_iter.set_postfix_str(str(post_fix))
 
         # Adding details in tensorboard
         self.writer.add_scalar('train/loss', avg_loss / len(data_loader))

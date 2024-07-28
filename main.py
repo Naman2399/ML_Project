@@ -317,7 +317,8 @@ def main():
             d_model=768,
             n_layers=2,
             heads=12,
-            dropout=0.1
+            dropout=0.1,
+            device= args.device
         )
         bert_lm = BERTLM(bert_model, len(tokenizer.vocab))
 

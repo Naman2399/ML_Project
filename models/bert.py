@@ -5,11 +5,12 @@ import numpy as np
 
 class PositionalEmbedding(torch.nn.Module):
 
-    def __init__(self, d_model, max_len=128):
+    def __init__(self, d_model, device, max_len=128):
         super().__init__()
 
         # Compute the positional encodings once in log space.
         pe = torch.zeros(max_len, d_model).float()
+        pe = pe.to(device)
         pe.require_grad = False
 
         for pos in range(max_len):
@@ -37,7 +38,7 @@ class BERTEmbedding(torch.nn.Module):
         sum of all these features are output of BERTEmbedding
     """
 
-    def __init__(self, vocab_size, embed_size, seq_len=64, dropout=0.1):
+    def __init__(self, vocab_size, embed_size, device, seq_len=64, dropout=0.1):
         """
         :param vocab_size: total vocab size
         :param embed_size: embedding size of token embedding
@@ -50,7 +51,7 @@ class BERTEmbedding(torch.nn.Module):
         # padding_idx is not updated during training, remains as fixed pad (0)
         self.token = torch.nn.Embedding(vocab_size, embed_size, padding_idx=0)
         self.segment = torch.nn.Embedding(3, embed_size, padding_idx=0)
-        self.position = PositionalEmbedding(d_model=embed_size, max_len=seq_len)
+        self.position = PositionalEmbedding(d_model=embed_size, max_len=seq_len, device= device)
         self.dropout = torch.nn.Dropout(p=dropout)
 
     def forward(self, sequence, segment_label):
@@ -160,7 +161,7 @@ class BERT(torch.nn.Module):
     BERT model : Bidirectional Encoder Representations from Transformers.
     """
 
-    def __init__(self, vocab_size, d_model=768, n_layers=12, heads=12, dropout=0.1):
+    def __init__(self, vocab_size, device, d_model=768, n_layers=12, heads=12, dropout=0.1):
         """
         :param vocab_size: vocab_size of total words
         :param hidden: BERT model hidden size
@@ -178,7 +179,7 @@ class BERT(torch.nn.Module):
         self.feed_forward_hidden = d_model * 4
 
         # embedding for BERT, sum of positional, segment, token embeddings
-        self.embedding = BERTEmbedding(vocab_size=vocab_size, embed_size=d_model)
+        self.embedding = BERTEmbedding(vocab_size=vocab_size, embed_size=d_model, device= device)
 
         # multi-layers transformer blocks, deep network
         self.encoder_blocks = torch.nn.ModuleList(
