@@ -83,15 +83,12 @@ def run_validation(model, validation_ds, tokenizer_src, tokenizer_tgt, max_len, 
             expected.append(target_text)
             predicted.append(model_out_text)
 
-            # Print the source, target and model output
-            print_msg('-' * console_width)
-            print_msg(f"{f'SOURCE: ':>12}{source_text}")
-            print_msg(f"{f'TARGET: ':>12}{target_text}")
-            print_msg(f"{f'PREDICTED: ':>12}{model_out_text}")
-
-            if count == num_examples:
+            if count <= num_examples:
+                # Print the source, target and model output
                 print_msg('-' * console_width)
-                break
+                print_msg(f"{f'SOURCE: ':>12}{source_text}")
+                print_msg(f"{f'TARGET: ':>12}{target_text}")
+                print_msg(f"{f'PREDICTED: ':>12}{model_out_text}")
 
     if writer:
 
@@ -177,12 +174,15 @@ def run(args : argparse.ArgumentParser, model, train_dataloader, val_dataloader,
             global_step += 1
 
         # Log the loss
-        args.writer.add_scalar('train total loss', train_loss, epoch)
+        args.writer.add_scalar('train total loss', train_loss, epoch / len(train_dataloader))
 
         # Run validation at the end of every epoch
         val_blue_score = run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, args.seq_len, args.device, lambda msg: batch_iterator.write(msg), epoch, args.writer)
 
         # Save the model at the end of every epoch
-        if val_blue_score > best_blue_score :
-            save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss)
-            best_blue_score = val_blue_score
+        save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_blue_score)
+
+        # Uncomment and modify some logic for this part
+        # if val_blue_score > best_blue_score :
+        #     save_checkpoint(args, model, optimizer, epoch, checkpoint_path, val_loss)
+        #     best_blue_score = val_blue_score

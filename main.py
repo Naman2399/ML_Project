@@ -2,12 +2,7 @@ import argparse
 import sys
 
 import torch
-from datasets import load_dataset as load_dataset_hug_face
-from torch.utils.data import random_split
 from torch.utils.tensorboard import SummaryWriter
-from dataset.dataset_utils_lang_translation.bilingual_dataset import BilingualDataset, causal_mask
-
-from torch.utils.data import random_split, DataLoader
 
 import dataset.breast_cancer_dataset as breast_cancer
 import dataset.cifar10 as cifar10
@@ -15,7 +10,8 @@ import dataset.digits_dataset as digits
 import dataset.housing_dataset as housing
 import dataset.images_wild_cats as wild_cats
 import dataset.text_corpus_2_eng_to_it as text_corpus_2_eng_to_it
-import dataset.dataset_utils_lang_translation.text_corpus_2 as text_corpus_2
+import dataset.text_corpus_2_eng_to_hi as text_corpus_2_eng_to_hi
+import dataset.text_corpus_2_eng_to_hi_kaggle as text_corpus_2_eng_to_hi_kaggle
 import models.alexnet as alexnet
 import models.inception as inception
 import models.lenet_5 as lenet_5
@@ -42,7 +38,9 @@ def load_dataset(name, args)  :
         'digits': digits.load_dataset,
         'cifar10': cifar10.load_dataset,
         'wild_cats' : wild_cats.load_dataset,
-        'text_corpus_eng_to_it' : text_corpus_2_eng_to_it.load_dataset
+        'text_corpus_eng_to_it' : text_corpus_2_eng_to_it.load_dataset,
+        'text_corpus_2_eng_to_hi' : text_corpus_2_eng_to_hi.load_dataset,
+        'text_corpus_2_eng_to_hi_kaggle' : text_corpus_2_eng_to_hi_kaggle.load_dataset
     }
     return datasets[name](args)
 
@@ -55,7 +53,8 @@ def main():
     parser = argparse.ArgumentParser(description="Describe dataset details")
     parser.add_argument("--dataset", type=str,
                         help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10', "
-                             "'wild_cats', 'text_corpus_eng_to_it')")
+                             "'wild_cats', 'text_corpus_eng_to_it', 'text_corpus_2_eng_to_hi', "
+                             "'text_corpus_2_eng_to_hi_kaggle')")
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
@@ -123,6 +122,13 @@ def main():
 
     elif args.dataset.lower() in ['text_corpus_eng_to_it'] :
         train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = load_dataset(args.dataset.lower(), args)
+
+    elif args.dataset.lower() in ['text_corpus_2_eng_to_hi'] :
+        train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = load_dataset(args.dataset.lower(), args)
+
+    elif args.dataset.lower() in ['text_corpus_2_eng_to_hi_kaggle']:
+        train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = load_dataset(args.dataset.lower(), args)
+
     else:
         print("Dataset doesn't exist")
         print("Please provide a dataset name using the --dataset argument.")
@@ -265,15 +271,38 @@ def main():
         Input  : All the sentences are in English
         Output : All the sentences are in Italian 
     '''
-
-    # Data input details ----> train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt
     if args.dataset.lower() == 'text_corpus_eng_to_it' :
-
+        # Data input details ----> train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt
         model = get_model(args, tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size()).to(device)
 
         import model_run.complete.text_translation as main_modules
         main_modules.run(args, model, train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt)
 
+    '''
+        Text Corpus Data 
+            Input  : All the sentences are in English
+            Output : All the sentences are in Hindi
+    '''
+
+    if args.dataset.lower() == 'text_corpus_2_eng_to_hi' :
+        # Data input details ----> train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt
+        model = get_model(args, tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size()).to(device)
+
+        import model_run.complete.text_translation as main_modules
+        main_modules.run(args, model, train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt)
+
+    '''
+        Text Corpus Data 
+        Preprocessing : It is a CSV file where the data is present in Dataframe format where two columns are there 'English' and 'Hindi'
+        Input : All the sentence are in English 
+        Output : All the sentence are in Hindi     
+    '''
+    if args.dataset.lower() == 'text_corpus_2_eng_to_hi_kaggle' :
+        # Data input details ----> train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt
+        model = get_model(args, tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size()).to(device)
+
+        import model_run.complete.text_translation as main_modules
+        main_modules.run(args, model, train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt)
 
     writer.close()
     sys.exit()
