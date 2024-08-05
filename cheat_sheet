@@ -32,9 +32,23 @@ RNN
 python main.py --dataset text_corpus_v2 --model rnn --epochs 100 --lr 0.0005 --chunk 100 --embed_size 300 --hidden_size 500 --num_layers 2
 
 Transformer
+(Some Links -
+        Dataset - https://www.kaggle.com/code/endofnight17j03/lstm-encoder-decoder-english-hindi/notebook
+        Youtube - https://www.youtube.com/watch?v=ISNdQcPhsts
+)
 python main.py --dataset text_corpus_eng_to_it  --model transformer
-Models
-WildCats
+python main.py --dataset text_corpus_eng_to_hi_kaggle  --model transformer
+
+BERT
+(Some Links -
+        Dataset - Cornell Movie Dialogue Dataset
+        Youtube - https://www.youtube.com/watch?v=90mGPxR2GgY
+        Blue Score - https://medium.com/@sthanikamsanthosh1994/understanding-bleu-and-rouge-score-for-nlp-evaluation-1ab334ecadcb
+        Medium - https://medium.com/data-and-beyond/complete-guide-to-building-bert-model-from-sratch-3e6562228891
+)
+python main.py --dataset cornell_dialogue_dataset --model bert
+
+
 
 ----- Local ----------
 python main.py --dataset wild_cats --model alexnet --epochs 1 --lr 0.0005 --batch 256 --dataset_path D:/Placement/ML_Project/data/images_wild_cats_10
@@ -46,12 +60,13 @@ python main.py --dataset wild_cats --model inception --epochs 100 --lr 0.0005 --
 python main.py --dataset wild_cats --model resnet18 --epochs 100 --lr 0.0005 --batch 256 --dataset_path /data/home/karmpatel/karm_8T/naman/demo/images_wild_cats_10
 python main.py --dataset wild_cats --model vgg16 --epochs 100 --lr 0.0005 --batch 32 --dataset_path /data/home/karmpatel/karm_8T/naman/demo/images_wild_cats_10
 python main.py --dataset wild_cats --model vgg19 --epochs 100 --lr 0.0005 --batch 32 --dataset_path /data/home/karmpatel/karm_8T/naman/demo/images_wild_cats_10
+python main.py --dataset text_corpus_eng_to_it  --model transformer
+python main.py --dataset text_corpus_eng_to_hi_kaggle  --model transformer
+python main.py --dataset cornell_dialogue_dataset --model bert
+python main.py --dataset pascal_voc --model yolo_v1 --epochs 2
 
-
-
-Tensorboard
+----------- Tensorboard ---------------------
 tensorboard --logdir=runs
-
 tensorboard --logdir=./ --host=10.192.12.61 --port=6001
 
 ------------------- Links for Reference -----------------------------------
@@ -74,6 +89,3 @@ ln -s /data/home/karmpatel/karm_8T/naman/demo/data/* /raid/home/namanmalpani/fin
 ln -s /data/home/karmpatel/karm_8T/naman/demo/runs/* /raid/home/namanmalpani/final_yr/ML_Project/runs
 
 
-------------------------------------- Tasks ----------------------------------------
-1. Re-visit text_corpus_v1
-2. Re-evaluate all the functions together

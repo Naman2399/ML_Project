@@ -13,6 +13,7 @@ import dataset.text_corpus_2_eng_to_it as text_corpus_2_eng_to_it
 import dataset.text_corpus_2_eng_to_hi as text_corpus_2_eng_to_hi
 import dataset.text_corpus_2_eng_to_hi_kaggle as text_corpus_2_eng_to_hi_kaggle
 import dataset.cornell_dialogue_dataset as cornell_dialogue_dataset
+import dataset.pascal_voc as pascal_voc
 import models.alexnet as alexnet
 import models.inception as inception
 import models.lenet_5 as lenet_5
@@ -27,6 +28,7 @@ from models import multiclass_classification as multiclass_classification
 from models.bert import BERT, BERTLM
 from models.resnet_18 import BasicBlock
 from models.transformer import get_model
+from models.yolo_v1 import Yolov1
 from utils.checkpoints import create_checkpoint_filename, epoch_completed
 from utils.data_utils import plot_feature_vs_target, create_dataloaders
 from utils.device import check_gpu_availability
@@ -43,7 +45,8 @@ def load_dataset(name, args)  :
         'text_corpus_eng_to_it' : text_corpus_2_eng_to_it.load_dataset,
         'text_corpus_2_eng_to_hi' : text_corpus_2_eng_to_hi.load_dataset,
         'text_corpus_2_eng_to_hi_kaggle' : text_corpus_2_eng_to_hi_kaggle.load_dataset,
-        'cornell_dialogue_dataset' : cornell_dialogue_dataset.load_dataset
+        'cornell_dialogue_dataset' : cornell_dialogue_dataset.load_dataset,
+        'pascal_voc' : pascal_voc.load_dataset
     }
     return datasets[name](args)
 
@@ -57,16 +60,17 @@ def main():
     parser.add_argument("--dataset", type=str,
                         help="Name of the dataset (e.g., 'housing', 'breast_cancer', 'digits', 'cifar10', "
                              "'wild_cats', 'text_corpus_eng_to_it', 'text_corpus_2_eng_to_hi', "
-                             "'text_corpus_2_eng_to_hi_kaggle', 'cornell_dialogue_dataset')")
+                             "'text_corpus_2_eng_to_hi_kaggle', 'cornell_dialogue_dataset', "
+                             "'pascal_voc')")
     parser.add_argument("--model", type=str,
                         help="Name of the model to use (e.g., 'linear_reg', 'binary_class', "
                              "'multi_class', 'lenet', 'lenetv2', 'encoder_decoder', 'rnn', 'lstm', "
                              "'alexnet', 'vgg16', 'vgg19', 'inception', 'resnet18', 'vgg16_pretrain_in1k' , "
                              "'vgg19_pretrain_in1k', 'inception_pretrain_in1k', 'resnet18_pretrain_in1k' , "
-                             "'transformer', 'bert')")
-    parser.add_argument("--batch", type=int, default=32, help="Enter batch size")
-    parser.add_argument("--epochs", type=int, default=50, help="Enter number of epochs")
-    parser.add_argument("--lr", type=float, default=0.0001, help="Learning Rate")
+                             "'transformer', 'bert', 'yolo_v1')")
+    parser.add_argument("--batch", type=int, default=64, help="Enter batch size")
+    parser.add_argument("--epochs", type=int, default=2, help="Enter number of epochs")
+    parser.add_argument("--lr", type=float, default=0.00002, help="Learning Rate")
     parser.add_argument("--exp_name", type=str, default="debug", help="Experiment Name")
     parser.add_argument("--ckpt_path", type=str, default="/data/home/karmpatel/karm_8T/naman/demo/ckpts", help="Load ckpt file for model")
     parser.add_argument("--ckpt_filename", type=str, default=None, help="Load ckpt file for model")
@@ -134,6 +138,9 @@ def main():
 
     elif args.dataset.lower() in ['cornell_dialogue_dataset'] :
         train_dataloader, tokenizer = load_dataset(args.dataset.lower(), args)
+
+    elif args.dataset.lower() in ['pascal_voc'] :
+        train_loader, test_loader = load_dataset(args.dataset.lower(), args)
 
     else:
         print("Dataset doesn't exist")
@@ -324,6 +331,17 @@ def main():
 
         import model_run.complete.bert_trainer as main_modules
         main_modules.run(args, bert_lm, train_dataloader)
+
+    '''
+        Pascal VOC dataset 
+        This dataset details with Object Detection 
+    '''
+    if args.dataset.lower() == 'pascal_voc' :
+        # Here we have from dataset train_loader, test_loader
+        model = Yolov1(split_size=7, num_boxes=2, num_classes=20).to(args.device)
+
+        import model_run.complete.yolo as main_modules
+        main_modules.run(model, train_loader, test_loader, device, writer, args)
 
     writer.close()
     sys.exit()

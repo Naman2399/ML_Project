@@ -69,7 +69,7 @@ def train(model, train_loader, validation_loader, criterion, optimizer, epochs, 
         # Stopping Criteria for model
         if len(val_losses) >= 10 and stopping_criteria(val_losses[-10:], val_loss):
             print("Early Stopping .....")
-            break
+            breakp
 
     return train_losses, val_losses, train_accuracies, val_accuracies
 
