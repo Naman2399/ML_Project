@@ -43,7 +43,7 @@ def run(model, train_loader, test_loader, device, writer, args ) :
         )
         print(f"Train mAP: {mean_avg_prec}")
 
-        train_loss = training.train_epoch(train_loader, model, optimizer, loss_fn, writer, checkpoint_path, device, args)
+        train_loss = training.train_epoch(train_loader, model, optimizer, loss_fn, writer, checkpoint_path, device, args, epoch)
 
         writer.add_scalar('train_loss', train_loss, epoch + 1)
 
